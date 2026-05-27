@@ -11,7 +11,7 @@ def init_pool():
         print(f"Database Config: Target={Config.MYSQL_HOST}:{Config.MYSQL_PORT} | User={Config.MYSQL_USER} | DB={Config.MYSQL_DATABASE}")
         connection_pool = pooling.MySQLConnectionPool(
             pool_name="bank_pool",
-            pool_size=10,
+            pool_size=3,  # Optimized to prevent connection exhaustion on hosted database limits
             pool_reset_session=True,
             host=Config.MYSQL_HOST,
             user=Config.MYSQL_USER,
@@ -22,6 +22,8 @@ def init_pool():
         run_migrations()
     except Error as e:
         print(f"Error creating connection pool: {e}")
+        import traceback
+        traceback.print_exc()
         raise
 
 
