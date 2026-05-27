@@ -1,13 +1,8 @@
 import os
+from dotenv import load_dotenv
 
-# Only load .env in local development.
-# In production (Railway / Render), environment variables are injected
-# directly by the platform — we must NOT let a stale .env override them.
-_is_production = os.getenv("RAILWAY_ENVIRONMENT") or os.getenv("RENDER") or os.getenv("PORT")
-
-if not _is_production:
-    from dotenv import load_dotenv
-    load_dotenv()
+# Load .env for local dev (override=False means Railway's real env vars always win)
+load_dotenv(override=False)
 
 
 class Config:
