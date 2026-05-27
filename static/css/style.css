@@ -1099,6 +1099,7 @@ select.form-control {
     align-items: center;
     gap: 0.5rem;
     list-style: none;
+    white-space: nowrap;
 }
 
 .landing-nav-links a {
@@ -1108,6 +1109,7 @@ select.form-control {
     transition: var(--transition);
     font-size: 0.88rem;
     font-weight: 600;
+    white-space: nowrap;
 }
 
 .landing-nav-links a:hover {
@@ -1119,6 +1121,7 @@ select.form-control {
     padding: 0.4rem 1rem;
     font-size: 0.82rem;
     font-weight: 700;
+    white-space: nowrap;
 }
 
 .hero-section {
@@ -1751,7 +1754,18 @@ select.form-control {
     }
     
     .landing-nav {
-        padding: 0 16px;
+        padding: 0 12px;
+    }
+    
+    /* Collapse the brand text on mobile so only the clean shield logo is shown */
+    .landing-nav .navbar-brand .brand-text {
+        display: none;
+    }
+    
+    /* Optimize the brand logo padding to form a clean left badge */
+    .landing-nav .navbar-brand {
+        padding: 6px 8px;
+        gap: 0;
     }
     
     /* Hide informational scroll links on mobile to prevent overcrowding */
@@ -1759,14 +1773,19 @@ select.form-control {
         display: none;
     }
     
-    /* Tighten links on mobile viewports */
+    /* Tighten links on mobile viewports and prevent text wrapping */
     .landing-nav-links {
-        gap: 0.25rem;
+        gap: 0.35rem;
     }
     
     .landing-nav-links a {
-        padding: 0.4rem 0.5rem;
-        font-size: 0.8rem;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.82rem;
+    }
+    
+    .landing-nav-links .btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.78rem;
     }
     
     /* Forms: full-width on mobile */
