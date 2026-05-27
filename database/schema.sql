@@ -1,5 +1,16 @@
--- BrainiacBank PostgreSQL Schema (Supabase)
--- All tables use IF NOT EXISTS so re-running is safe
+-- Drops all tables to reset the database completely
+DROP TABLE IF EXISTS kyc_documents CASCADE;
+DROP TABLE IF EXISTS beneficiaries CASCADE;
+DROP TABLE IF EXISTS savings_goals CASCADE;
+DROP TABLE IF EXISTS atm_requests CASCADE;
+DROP TABLE IF EXISTS fixed_deposits CASCADE;
+DROP TABLE IF EXISTS loans CASCADE;
+DROP TABLE IF EXISTS notifications CASCADE;
+DROP TABLE IF EXISTS virtual_cards CASCADE;
+DROP TABLE IF EXISTS login_logs CASCADE;
+DROP TABLE IF EXISTS transfers CASCADE;
+DROP TABLE IF EXISTS transactions CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
@@ -139,3 +150,10 @@ CREATE INDEX IF NOT EXISTS idx_transactions_user_id ON transactions(user_id);
 CREATE INDEX IF NOT EXISTS idx_transactions_created_at ON transactions(created_at);
 CREATE INDEX IF NOT EXISTS idx_notifications_user_id ON notifications(user_id);
 CREATE INDEX IF NOT EXISTS idx_login_logs_user_id ON login_logs(user_id);
+
+-- Default admin account (password: admin123)
+INSERT INTO users (full_name, email, phone, password_hash, account_number, account_type, balance, is_admin)
+VALUES ('System Admin', 'admin@brainiacbank.com', '+233000000000',
+        '$2b$12$R.S.Y9R21qV24c3n9G2Vcu3B5aB.eXhA45C3T9u7cK2Z9.h45f2mG', 'ADMIN000000001', 'savings', 0.00, 1)
+ON CONFLICT (email) DO NOTHING;
+
