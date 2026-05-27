@@ -7,7 +7,8 @@ class Transaction:
     @staticmethod
     def deposit(user_id, amount):
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        import psycopg2.extras
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         try:
             cursor.execute("SELECT balance, is_frozen FROM users WHERE id = %s FOR UPDATE", (user_id,))
             user = cursor.fetchone()
@@ -39,7 +40,8 @@ class Transaction:
     @staticmethod
     def withdraw(user_id, amount):
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        import psycopg2.extras
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         try:
             cursor.execute("SELECT balance, is_frozen FROM users WHERE id = %s FOR UPDATE", (user_id,))
             user = cursor.fetchone()
@@ -73,7 +75,8 @@ class Transaction:
     @staticmethod
     def transfer(sender_id, receiver_account, amount, note=""):
         conn = get_connection()
-        cursor = conn.cursor(dictionary=True)
+        import psycopg2.extras
+        cursor = conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         try:
             cursor.execute("SELECT id, balance, is_frozen, account_number, full_name FROM users WHERE id = %s FOR UPDATE", (sender_id,))
             sender = cursor.fetchone()
