@@ -60,6 +60,15 @@ def login():
         password = request.form.get("password", "")
 
         user = User.find_by_email(email)
+        
+        # === DIAGNOSTIC LOG ===
+        print(f"[LOGIN DEBUG] Attempt for email: '{email}'")
+        print(f"[LOGIN DEBUG] User found: {True if user else False}")
+        if user:
+            print(f"[LOGIN DEBUG] Stored hash type: {type(user['password_hash'])}")
+            print(f"[LOGIN DEBUG] Stored hash length: {len(user['password_hash'])}")
+            verified = User.verify_password(user["password_hash"], password)
+            print(f"[LOGIN DEBUG] Password verified successfully: {verified}")
 
         if not user or not User.verify_password(user["password_hash"], password):
             try:
@@ -69,8 +78,8 @@ def login():
                         (user["id"], request.remote_addr, str(request.user_agent)[:255]),
                         commit=True,
                     )
-            except Exception:
-                pass
+            except Exception as e:
+                print(f"[LOGIN DEBUG] Failed to insert log: {e}")
             flash("Invalid email or password.", "danger")
             return render_template("login.html")
 
