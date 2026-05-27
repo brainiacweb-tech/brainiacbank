@@ -10,7 +10,7 @@ from models.loan import Loan
 from models.deposit_mgmt import FixedDeposit
 from models.atm import AtmRequest
 from models.extra import Beneficiary, SavingsGoal
-from utils.helpers import login_required, format_currency
+from utils.helpers import login_required, format_currency, client_required
 from werkzeug.utils import secure_filename
 
 
@@ -25,6 +25,8 @@ def allowed_file(filename):
 @main_bp.route("/")
 def index():
     if "user_id" in session:
+        if session.get("is_admin"):
+            return redirect(url_for("admin.dashboard"))
         return redirect(url_for("main.dashboard"))
     return render_template("index.html")
 
@@ -41,6 +43,9 @@ def dashboard():
     if not user:
         session.clear()
         return redirect(url_for("auth.login"))
+
+    if user.get("is_admin"):
+        return redirect(url_for("admin.dashboard"))
 
     recent = Transaction.get_mini_statement(user["id"], 5)
     monthly = Transaction.get_monthly_summary(user["id"])
@@ -67,7 +72,7 @@ def dashboard():
 
 
 @main_bp.route("/deposit", methods=["GET", "POST"])
-@login_required
+@client_required
 def deposit():
     user = User.find_by_id(session["user_id"])
     notif_count = Notification.get_unread_count(user["id"])
@@ -93,7 +98,7 @@ def deposit():
 
 
 @main_bp.route("/withdraw", methods=["GET", "POST"])
-@login_required
+@client_required
 def withdraw():
     user = User.find_by_id(session["user_id"])
     notif_count = Notification.get_unread_count(user["id"])
@@ -116,7 +121,7 @@ def withdraw():
 
 
 @main_bp.route("/transfer", methods=["GET", "POST"])
-@login_required
+@client_required
 def transfer():
     user = User.find_by_id(session["user_id"])
     notif_count = Notification.get_unread_count(user["id"])

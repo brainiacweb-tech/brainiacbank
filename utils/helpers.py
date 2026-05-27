@@ -41,3 +41,16 @@ def admin_required(f):
             return redirect(url_for("main.dashboard"))
         return f(*args, **kwargs)
     return decorated
+
+
+def client_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if "user_id" not in session:
+            flash("Please log in to access this page.", "warning")
+            return redirect(url_for("auth.login"))
+        if session.get("is_admin"):
+            flash("This page is restricted to client accounts only.", "warning")
+            return redirect(url_for("admin.dashboard"))
+        return f(*args, **kwargs)
+    return decorated
