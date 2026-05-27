@@ -57,7 +57,7 @@
                 </div>
                 <div style="text-align:right;">
                     <div class="card-expiry-label">Expires</div>
-                    <div class="card-expiry-value">{{ "%02d"|format(card.expiry_month) }}/{{ card.expiry_year|string|slice(-2) }}</div>
+                    <div class="card-expiry-value">{{ "%02d"|format(card.expiry_month) }}/{{ (card.expiry_year|string)[2:] }}</div>
                 </div>
             </div>
 
