@@ -30,7 +30,6 @@ def health():
     url = os.getenv("DATABASE_URL", "")
     status["env"] = {
         "DATABASE_URL": f"postgresql://...{url[-20:]}" if url else "(not set)",
-        "RAILWAY_ENVIRONMENT": os.getenv("RAILWAY_ENVIRONMENT", "(not set)"),
         "PORT": os.getenv("PORT", "(not set)"),
     }
     try:

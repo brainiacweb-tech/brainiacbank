@@ -15,7 +15,7 @@ def init_pool():
     if not url:
         raise RuntimeError(
             "DATABASE_URL is not set. "
-            "Add it to Railway Variables or your .env file.\n"
+            "Please configure it in your environment or your .env file.\n"
             "Format: postgresql://user:password@host:port/dbname"
         )
     # Mask password in log
