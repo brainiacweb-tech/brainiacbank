@@ -10,6 +10,8 @@ _pool = None
 def init_pool():
     global _pool
     url = Config.DATABASE_URL
+    if url:
+        url = url.strip()
     if not url:
         raise RuntimeError(
             "DATABASE_URL is not set. "
