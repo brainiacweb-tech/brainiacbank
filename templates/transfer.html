@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Transfer — BrainiacBank{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Transfer Money</h1>
+    <p>Send funds to another BrainiacBank account</p>
+</div>
+
+<div class="two-col">
+    <div class="content-card">
+        <div class="card-header"><h2>New Transfer</h2></div>
+        <div class="card-body">
+            <form method="POST" data-validate>
+                <div class="form-group">
+                    <label>From Account</label>
+                    <input type="text" class="form-control" value="{{ user.account_number }} — {{ user.full_name }}" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Recipient Account Number</label>
+                    <input type="text" name="receiver_account" class="form-control" placeholder="e.g. BNK1234567890" required>
+                    <div id="verify-result" style="margin-top:0.4rem;font-size:0.85rem;min-height:1.2em;"></div>
+                </div>
+                <div class="form-group">
+                    <label>Amount (GH₵)</label>
+                    <input type="number" name="amount" class="form-control" placeholder="0.00" step="0.01" min="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Note (optional)</label>
+                    <input type="text" name="note" class="form-control" placeholder="What's this for?" maxlength="255">
+                </div>
+                <div style="padding:0.75rem;background:rgba(59,130,246,0.06);border-radius:var(--radius-sm);margin-bottom:1.25rem;font-size:0.85rem;color:var(--gray-600);">
+                    <strong>Available Balance:</strong> GH₵ {{ "%.2f"|format(user.balance) }}
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+                    Send Transfer
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div>
+        <div class="content-card" style="margin-bottom:1.5rem;">
+            <div class="card-header"><h2>Transfer Guide</h2></div>
+            <div class="card-body" style="font-size:0.9rem;color:var(--gray-600);line-height:1.8;">
+                <p><strong>1.</strong> Enter the recipient's BrainiacBank account number</p>
+                <p><strong>2.</strong> The recipient name will appear automatically for verification</p>
+                <p><strong>3.</strong> Enter the amount you want to transfer</p>
+                <p><strong>4.</strong> Add an optional note for your records</p>
+                <p><strong>5.</strong> Click "Send Transfer" to complete</p>
+                <div style="margin-top:1rem;padding:0.75rem;background:rgba(16,185,129,0.06);border-radius:var(--radius-sm);">
+                    All transfers are processed instantly with atomic database transactions for maximum reliability.
+                </div>
+            </div>
+        </div>
+
+        <div class="account-info-card">
+            <div class="account-info-label">Your Balance</div>
+            <div class="account-balance-large">GH₵ {{ "%.2f"|format(user.balance) }}</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

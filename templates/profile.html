@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block title %}Profile Settings — BrainiacBank{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Profile Settings</h1>
+    <p>Manage your account profile picture, KYC verification status, and security options</p>
+</div>
+
+<!-- PROFILE HEADER -->
+<div class="content-card" style="margin-bottom:2rem;">
+    <div class="card-body">
+        <div style="display:flex;align-items:center;gap:1.5rem;">
+            <div style="width: 80px; height: 80px; border-radius: 50%; overflow: hidden; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white; font-size: 2rem; font-weight: 700; flex-shrink:0; border: 2px solid var(--primary-light);">
+                {% if user.profile_picture %}
+                <img src="{{ url_for('static', filename='uploads/' + user.profile_picture) }}" alt="Profile" style="width:100%;height:100%;object-fit:cover;">
+                {% else %}
+                {{ user.full_name[0] }}
+                {% endif %}
+            </div>
+            <div>
+                <h2 style="font-size:1.3rem;font-weight:700;margin:0;">{{ user.full_name }}</h2>
+                <p style="color:var(--gray-500);margin:0.15rem 0 0.5rem;">{{ user.email }}</p>
+                <div style="display:flex;gap:0.5rem;flex-wrap:wrap;">
+                    <span class="badge badge-primary" style="text-transform:capitalize;">{{ user.account_type }} Account</span>
+                    <span class="badge badge-success">Active Status</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PHOTO & KYC DOCUMENT UPLOADER -->
+<div class="content-card" style="margin-bottom: 2rem;">
+    <div class="card-header"><h2>Profile Avatar & KYC Documents</h2></div>
+    <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));gap:2rem;">
+            <!-- Profile Photo Upload -->
+            <div>
+                <h3 style="font-size:1rem;margin-bottom:0.75rem;">Upload Profile Photo</h3>
+                <form method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="action" value="upload_photo">
+                    <div id="drag-drop-zone" style="border: 2px dashed var(--gray-300); border-radius: var(--radius); padding: 2rem 1rem; text-align: center; cursor: pointer; transition: var(--transition);">
+                        <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="var(--gray-400)" stroke-width="2" style="margin-bottom:0.5rem;"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+                        <p style="font-size:0.85rem;color:var(--gray-500);line-height:1.3;">Drag & Drop Photo here or click below to browse</p>
+                        <input type="file" name="profile_pic" id="profile_pic" style="display:none;" onchange="this.form.submit()">
+                    </div>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('profile_pic').click()" style="width:100%;margin-top:0.75rem;">Select Photo File</button>
+                </form>
+            </div>
+            
+            <!-- KYC Upload -->
+            <div>
+                <h3 style="font-size:1rem;margin-bottom:0.75rem;">KYC Identity Verification</h3>
+                <form method="POST" action="/profile/kyc" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label>Government ID Document Type</label>
+                        <select name="document_type" class="form-control" required>
+                            <option value="national_id">Ghana Card (National ID)</option>
+                            <option value="passport">Biometric Passport</option>
+                            <option value="voters_id">Voter's ID Card</option>
+                            <option value="utility_bill">Proof of Address (Utility Bill)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Document Image/PDF</label>
+                        <input type="file" name="kyc_file" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-sm" style="width:100%;">Submit KYC Document</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="two-col">
+    <!-- UPDATE PROFILE -->
+    <div class="content-card">
+        <div class="card-header"><h2>Update Profile</h2></div>
+        <div class="card-body">
+            <form method="POST" data-validate>
+                <input type="hidden" name="action" value="update_profile">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="full_name" class="form-control" value="{{ user.full_name }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control" value="{{ user.email }}" disabled>
+                    <small style="color:var(--gray-400);font-size:0.8rem;">Email cannot be updated</small>
+                </div>
+                <div class="form-group">
+                    <label>Ghana Phone Number</label>
+                    <input type="tel" name="phone" class="form-control" value="{{ user.phone }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Fintech Account Number</label>
+                    <input type="text" class="form-control" value="{{ user.account_number }}" disabled>
+                </div>
+                <div class="form-group">
+                    <label>Account Created Date</label>
+                    <input type="text" class="form-control" value="{{ user.created_at.strftime('%B %d, %Y') }}" disabled>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Save Profile Updates</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CHANGE PASSWORD -->
+    <div class="content-card">
+        <div class="card-header"><h2>Change Account Password</h2></div>
+        <div class="card-body">
+            <form method="POST" data-validate>
+                <input type="hidden" name="action" value="change_password">
+                <div class="form-group">
+                    <label>Current Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" name="current_password" class="form-control" placeholder="Enter current password" required>
+                        <button type="button" class="password-toggle" aria-label="Toggle password">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>New Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" name="new_password" class="form-control" placeholder="Min. 6 characters" required minlength="6">
+                        <button type="button" class="password-toggle" aria-label="Toggle password">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Confirm New Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" name="confirm_password" class="form-control" placeholder="Repeat new password" required>
+                        <button type="button" class="password-toggle" aria-label="Toggle password">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-warning" style="width:100%;justify-content:center;">Update Password</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

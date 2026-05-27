@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BrainiacBank — Modern Digital Banking</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- NAV -->
+    <nav class="landing-nav">
+        <a href="/" class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="BrainiacBank Logo" style="width:28px;height:28px;object-fit:contain;margin-right:6px;">
+            BrainiacBank
+        </a>
+        <ul class="navbar-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="{{ url_for('auth.login') }}">Login</a></li>
+            <li><a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-sm">Open Account</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero-section">
+        <div class="hero-content slide-up">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                Trusted by 10,000+ Ghanaians
+            </div>
+            <h1>Banking Made <span>Simple</span> & Secure</h1>
+            <p>Experience next-generation digital banking with BrainiacBank. Manage your finances, transfer funds, and track your spending all in Ghana Cedis.</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                    Get Started Free
+                </a>
+                <a href="#features" class="btn btn-outline btn-lg">
+                    Learn More
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div>
+                    <div class="hero-stat-value">GH&#8373; 2.4B+</div>
+                    <div class="hero-stat-label">Transactions Processed</div>
+                </div>
+                <div>
+                    <div class="hero-stat-value">99.9%</div>
+                    <div class="hero-stat-label">Uptime Guaranteed</div>
+                </div>
+                <div>
+                    <div class="hero-stat-value">256-bit</div>
+                    <div class="hero-stat-label">Encryption</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-visual slide-up" style="animation-delay:0.2s;">
+            <div class="hero-card-main">
+                <div class="hero-card-chip"></div>
+                <div class="hero-card-balance-label">Available Balance</div>
+                <div class="hero-card-balance">GH&#8373; 24,850.00</div>
+                <div class="hero-card-number">&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4289</div>
+                <div class="hero-card-row">
+                    <div>
+                        <label>Card Holder</label>
+                        <span>Kwame Asante</span>
+                    </div>
+                    <div>
+                        <label>Expires</label>
+                        <span>12/28</span>
+                    </div>
+                    <div>
+                        <label>Type</label>
+                        <span>Platinum</span>
+                    </div>
+                </div>
+
+                <div class="hero-card-floating hero-card-float-1">
+                    <div class="float-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+                    </div>
+                    <div>
+                        <div class="float-amount">+GH&#8373; 1,240</div>
+                        <div class="float-label">Income received</div>
+                    </div>
+                </div>
+
+                <div class="hero-card-floating hero-card-float-2">
+                    <div class="float-icon">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                    </div>
+                    <div>
+                        <div class="float-amount">Secured</div>
+                        <div class="float-label">256-bit SSL</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="features-section" id="features">
+        <div class="section-title">
+            <h2>Why Choose BrainiacBank?</h2>
+            <p>Powerful features designed for modern financial management</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <h3>Bank-Grade Security</h3>
+                <p>Your data is protected with industry-standard encryption, secure sessions, and multi-layer authentication.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+                </div>
+                <h3>Instant Transfers</h3>
+                <p>Send Ghana Cedis to any account instantly with atomic transactions and rollback protection.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                </div>
+                <h3>Virtual Cards</h3>
+                <p>Create up to 3 virtual Visa or Mastercard cards for secure online payments with custom styles.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                </div>
+                <h3>Real-Time Notifications</h3>
+                <p>Get instant alerts for every deposit, withdrawal, and transfer on your account.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 118 2.83"/><path d="M22 12A10 10 0 0012 2v10z"/></svg>
+                </div>
+                <h3>Smart Analytics</h3>
+                <p>Interactive charts and reports to visualize spending patterns and track your financial goals.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+                <h3>Download Records</h3>
+                <p>Export your complete transaction history as CSV for accounting and personal records.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA / ABOUT -->
+    <section class="cta-section" id="about">
+        <h2>Ready to Transform Your Banking?</h2>
+        <p>Join thousands of Ghanaians who trust BrainiacBank for their daily financial management. Open your free account in under 2 minutes.</p>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg" style="position:relative;">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Create Free Account
+        </a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="BrainiacBank Logo" style="width:24px;height:24px;object-fit:contain;margin-right:6px;">
+                BrainiacBank
+            </div>
+            <div class="footer-links">
+                <a href="{{ url_for('main.privacy') }}">Privacy Policy</a>
+                <a href="{{ url_for('main.terms') }}">Terms of Service</a>
+                <a href="{{ url_for('main.contact') }}">Contact</a>
+                <a href="{{ url_for('main.support') }}">Support</a>
+            </div>
+            <div class="footer-bottom" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:0.5rem;width:100%;">
+                <span>&copy; 2026 BrainiacBank Ghana. All rights reserved.</span>
+                <span style="font-weight:600;color:var(--primary);">Developed by Francis Kusi</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

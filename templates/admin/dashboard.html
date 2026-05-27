@@ -1,0 +1,369 @@
+{% extends "base.html" %}
+{% block title %}Admin Control Center — BrainiacBank{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Admin Control Center</h1>
+    <p>Monitor transaction revenue, regulate customer accounts, verify KYC documents, and approve credit disbursements</p>
+</div>
+
+<!-- STATS -->
+<div class="stats-grid" style="margin-bottom:2rem;">
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div class="stat-label">Total Core Users</div>
+        <div class="stat-value" data-counter="{{ total_users }}" data-prefix="" data-decimals="0">0</div>
+    </div>
+    <div class="stat-card success">
+        <div class="stat-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
+        <div class="stat-label">Active Portfolios</div>
+        <div class="stat-value" data-counter="{{ active_count }}" data-prefix="" data-decimals="0">0</div>
+    </div>
+    <div class="stat-card info">
+        <div class="stat-icon teal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+        </div>
+        <div class="stat-label">Simulated Bank Revenue</div>
+        <div class="stat-value" data-counter="{{ total_revenue }}" data-prefix="GH₵" data-decimals="2">GH₵0.00</div>
+    </div>
+    <div class="stat-card info" style="border-color:var(--primary-dark);">
+        <div class="stat-icon blue" style="background:var(--primary-light);color:var(--primary-dark);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"/><rect x="5" y="5" width="14" height="14" rx="1" ry="1"/><line x1="12" y1="5" x2="12" y2="19"/></svg>
+        </div>
+        <div class="stat-label">Total Vaulted Liquidity</div>
+        <div class="stat-value" data-counter="{{ total_balance }}" data-prefix="GH₵" data-decimals="2">GH₵0.00</div>
+    </div>
+</div>
+
+<!-- TABS FOR EXTRA CONTROL PANELS -->
+<div style="display:flex;gap:0.5rem;margin-bottom:1.5rem;border-bottom:1px solid var(--gray-200);padding-bottom:0.5rem;flex-wrap:wrap;">
+    <button class="btn btn-sm btn-outline tab-btn active" onclick="switchAdminTab('users-panel', this)">Manage Customers</button>
+    <button class="btn btn-sm btn-outline tab-btn" onclick="switchAdminTab('loans-panel', this)">Credit Approvals ({{ loans|length }})</button>
+    <button class="btn btn-sm btn-outline tab-btn" onclick="switchAdminTab('kyc-panel', this)">KYC Verifications ({{ kyc_documents|length }})</button>
+    <button class="btn btn-sm btn-outline tab-btn" onclick="switchAdminTab('atm-panel', this)">ATM Card Shipping ({{ atm_requests|length }})</button>
+</div>
+
+<!-- PANEL 1: USERS -->
+<div id="users-panel" class="admin-panel-content">
+    <div class="content-card" style="margin-bottom:2rem;">
+        <div class="card-header">
+            <h2>Registered Customer Accounts</h2>
+            <span class="badge badge-primary">{{ total_users }} Portfolios</span>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Account #</th>
+                        <th>Ghana Phone</th>
+                        <th>Balance</th>
+                        <th>Status</th>
+                        <th>Joined</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td>
+                            <div style="display:flex;align-items:center;gap:10px;">
+                                <div class="navbar-avatar" style="width:32px;height:32px;font-size:0.75rem;background:var(--primary);">
+                                    {% if u.profile_picture %}
+                                    <img src="{{ url_for('static', filename='uploads/' + u.profile_picture) }}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                                    {% else %}
+                                    {{ u.full_name[0] }}
+                                    {% endif %}
+                                </div>
+                                <div>
+                                    <div style="font-weight:600;font-size:0.9rem;">{{ u.full_name }}</div>
+                                    <div style="font-size:0.8rem;color:var(--gray-500);">{{ u.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="font-family:monospace;font-size:0.85rem;">{{ u.account_number }}</td>
+                        <td style="font-size:0.85rem;">{{ u.phone }}</td>
+                        <td class="amount" style="font-weight:600;">GH₵ {{ "%.2f"|format(u.balance) }}</td>
+                        <td>
+                            {% if u.is_frozen %}
+                            <span class="badge badge-danger">Frozen</span>
+                            {% elif u.is_active %}
+                            <span class="badge badge-success">Active</span>
+                            {% else %}
+                            <span class="badge badge-outline">Inactive</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-size:0.85rem;color:var(--gray-500);">{{ u.created_at.strftime('%b %d, %Y') }}</td>
+                        <td>
+                            <div style="display:flex;gap:0.4rem;">
+                                {% if u.is_frozen %}
+                                <form method="POST" action="{{ url_for('admin.unfreeze_account', user_id=u.id) }}">
+                                    <button type="submit" class="btn btn-success btn-sm">Unfreeze</button>
+                                </form>
+                                {% else %}
+                                <form method="POST" action="{{ url_for('admin.freeze_account', user_id=u.id) }}">
+                                    <button type="submit" class="btn btn-warning btn-sm">Freeze</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- PANEL 2: CREDIT / LOANS -->
+<div id="loans-panel" class="admin-panel-content" style="display:none;">
+    <div class="content-card" style="margin-bottom:2rem;">
+        <div class="card-header">
+            <h2>Credit Disbursements & Applications</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Applicant</th>
+                        <th>Term Amount</th>
+                        <th>Rate / Duration</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for loan in loans %}
+                    <tr>
+                        <td>
+                            <div style="font-weight:600;font-size:0.9rem;">{{ loan.full_name }}</div>
+                            <div style="font-size:0.8rem;color:var(--gray-500);">Account: {{ loan.account_number }}</div>
+                        </td>
+                        <td style="font-weight:600;">GH₵ {{ "%.2f"|format(loan.amount) }}</td>
+                        <td>{{ loan.interest_rate }}% Flat / {{ loan.duration_months }} Months</td>
+                        <td>
+                            {% if loan.status == 'pending' %}
+                            <span class="badge badge-warning">Pending Review</span>
+                            {% elif loan.status == 'approved' %}
+                            <span class="badge badge-success">Approved</span>
+                            {% elif loan.status == 'rejected' %}
+                            <span class="badge badge-danger">Rejected</span>
+                            {% else %}
+                            <span class="badge badge-primary">Paid</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if loan.status == 'pending' %}
+                            <div style="display:flex;gap:0.4rem;">
+                                <form method="POST" action="{{ url_for('admin.approve_loan', loan_id=loan.id) }}">
+                                    <button type="submit" class="btn btn-success btn-sm">Approve</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('admin.reject_loan', loan_id=loan.id) }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                </form>
+                            </div>
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not loans %}
+                    <tr><td colspan="5" class="empty-state"><p>No loan applications found</p></td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- PANEL 3: KYC VERIFICATIONS -->
+<div id="kyc-panel" class="admin-panel-content" style="display:none;">
+    <div class="content-card" style="margin-bottom:2rem;">
+        <div class="card-header">
+            <h2>KYC Document Submissions</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Document Type</th>
+                        <th>File View</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in kyc_documents %}
+                    <tr>
+                        <td>
+                            <div style="font-weight:600;font-size:0.9rem;">{{ doc.full_name }}</div>
+                            <div style="font-size:0.8rem;color:var(--gray-500);">Account: {{ doc.account_number }}</div>
+                        </td>
+                        <td style="text-transform:capitalize;">{{ doc.document_type.replace('_', ' ') }}</td>
+                        <td>
+                            <a href="{{ url_for('static', filename='uploads/' + doc.document_path) }}" target="_blank" class="btn btn-outline btn-sm">
+                                View Document
+                            </a>
+                        </td>
+                        <td>
+                            {% if doc.status == 'pending' %}
+                            <span class="badge badge-warning">Pending Review</span>
+                            {% elif doc.status == 'approved' %}
+                            <span class="badge badge-success">Approved</span>
+                            {% else %}
+                            <span class="badge badge-danger">Rejected</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if doc.status == 'pending' %}
+                            <div style="display:flex;gap:0.4rem;">
+                                <form method="POST" action="{{ url_for('admin.approve_kyc', doc_id=doc.id) }}">
+                                    <button type="submit" class="btn btn-success btn-sm">Verify</button>
+                                </form>
+                                <form method="POST" action="{{ url_for('admin.reject_kyc', doc_id=doc.id) }}">
+                                    <button type="submit" class="btn btn-danger btn-sm">Reject</button>
+                                </form>
+                            </div>
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not kyc_documents %}
+                    <tr><td colspan="5" class="empty-state"><p>No KYC document submissions found</p></td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- PANEL 4: ATM CARD SHIPPING -->
+<div id="atm-panel" class="admin-panel-content" style="display:none;">
+    <div class="content-card" style="margin-bottom:2rem;">
+        <div class="card-header">
+            <h2>Physical ATM Debit Shipping</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Recipient</th>
+                        <th>Network</th>
+                        <th>Shipping Address</th>
+                        <th>Logistics Status</th>
+                        <th>Update Shipping</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in atm_requests %}
+                    <tr>
+                        <td>
+                            <div style="font-weight:600;font-size:0.9rem;">{{ req.full_name }}</div>
+                            <div style="font-size:0.8rem;color:var(--gray-500);">Account: {{ req.account_number }}</div>
+                        </td>
+                        <td style="text-transform:capitalize;font-weight:700;">{{ req.card_type.upper() }}</td>
+                        <td style="font-size:0.85rem;max-width:200px;overflow:hidden;text-overflow:ellipsis;">{{ req.delivery_address }}</td>
+                        <td>
+                            {% if req.status == 'pending' %}
+                            <span class="badge badge-warning">Processing</span>
+                            {% elif req.status == 'approved' %}
+                            <span class="badge badge-info">Approved</span>
+                            {% elif req.status == 'dispatched' %}
+                            <span class="badge badge-primary">Dispatched</span>
+                            {% else %}
+                            <span class="badge badge-success">Delivered</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <form method="POST" action="{{ url_for('admin.update_atm_status', req_id=req.id) }}" style="display:flex;gap:0.25rem;align-items:center;">
+                                <select name="status" class="form-control form-control-sm" style="padding:0.25rem 0.5rem;font-size:0.8rem;width:120px;" required>
+                                    <option value="pending" {% if req.status == 'pending' %}selected{% endif %}>Processing</option>
+                                    <option value="approved" {% if req.status == 'approved' %}selected{% endif %}>Approved</option>
+                                    <option value="dispatched" {% if req.status == 'dispatched' %}selected{% endif %}>Dispatched</option>
+                                    <option value="delivered" {% if req.status == 'delivered' %}selected{% endif %}>Delivered</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary btn-sm" style="padding:0.3rem 0.5rem;font-size:0.75rem;">Set</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not atm_requests %}
+                    <tr><td colspan="5" class="empty-state"><p>No physical ATM order logs</p></td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- TRANSACTION LOGS (RECENT ALL USERS) -->
+<div class="content-card">
+    <div class="card-header">
+        <h2>Global Audit Transaction Logs</h2>
+        <a href="{{ url_for('admin.all_transactions') }}" class="btn btn-sm btn-outline">View All Logs</a>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Customer Account</th>
+                    <th>Audit Type</th>
+                    <th>Sum (GH₵)</th>
+                    <th>Audit Reference</th>
+                    <th>Log Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in recent_transactions %}
+                <tr>
+                    <td>
+                        <div style="font-weight:600;font-size:0.9rem;">{{ txn.full_name }}</div>
+                        <div style="font-size:0.8rem;color:var(--gray-500);font-family:monospace;">{{ txn.account_number }}</div>
+                    </td>
+                    <td>
+                        {% if txn.transaction_type == 'deposit' %}
+                        <span class="badge badge-success">Deposit</span>
+                        {% elif txn.transaction_type == 'withdrawal' %}
+                        <span class="badge badge-danger">Withdrawal</span>
+                        {% elif txn.transaction_type == 'transfer_in' %}
+                        <span class="badge badge-info">Transfer In</span>
+                        {% else %}
+                        <span class="badge badge-warning">Transfer Out</span>
+                        {% endif %}
+                    </td>
+                    <td class="amount {% if txn.transaction_type in ['deposit', 'transfer_in'] %}positive{% else %}negative{% endif %}">
+                        {% if txn.transaction_type in ['deposit', 'transfer_in'] %}+{% else %}-{% endif %}GH₵ {{ "%.2f"|format(txn.amount) }}
+                    </td>
+                    <td style="font-family:monospace;font-size:0.8rem;color:var(--gray-500);">{{ txn.reference_number }}</td>
+                    <td style="font-size:0.85rem;color:var(--gray-500);white-space:nowrap;">{{ txn.created_at.strftime('%b %d, %H:%M') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function switchAdminTab(panelId, btn) {
+    // Hide all panels
+    document.querySelectorAll('.admin-panel-content').forEach(panel => {
+        panel.style.display = 'none';
+    });
+    // Show chosen panel
+    document.getElementById(panelId).style.display = 'block';
+    
+    // Switch active button class
+    document.querySelectorAll('.tab-btn').forEach(button => {
+        button.classList.remove('active');
+    });
+    btn.classList.add('active');
+}
+</script>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — BrainiacBank{% endblock %}
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Welcome back, {{ user.full_name.split()[0] }}</h1>
+    <p>Here's your financial overview</p>
+</div>
+
+<!-- ACCOUNT CARD -->
+<div class="account-info-card" style="margin-bottom:2rem;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;">
+        <div>
+            <div class="account-info-label">Current Balance</div>
+            <div class="account-balance-large" data-counter="{{ user.balance }}" data-prefix="GH₵" data-decimals="2">GH₵0.00</div>
+        </div>
+        <div style="text-align:right;">
+            <div class="account-info-label">Account Number</div>
+            <div class="account-info-value">{{ user.account_number }}</div>
+            <div class="account-info-label" style="margin-top:0.75rem;">Account Type</div>
+            <div class="account-info-value" style="text-transform:capitalize;">{{ user.account_type }}</div>
+        </div>
+    </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-grid">
+    <div class="stat-card success">
+        <div class="stat-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+        </div>
+        <div class="stat-label">Total Deposits</div>
+        <div class="stat-value" data-counter="{{ total_deposits }}" data-prefix="GH₵" data-decimals="2">GH₵0.00</div>
+    </div>
+    <div class="stat-card danger">
+        <div class="stat-icon red">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+        </div>
+        <div class="stat-label">Total Withdrawals</div>
+        <div class="stat-value" data-counter="{{ total_withdrawals }}" data-prefix="GH₵" data-decimals="2">GH₵0.00</div>
+    </div>
+    <div class="stat-card info">
+        <div class="stat-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+        <div class="stat-label">Transactions</div>
+        <div class="stat-value">{{ recent_transactions|length }}</div>
+    </div>
+</div>
+
+<!-- QUICK ACTIONS -->
+<div class="content-card" style="margin-bottom:2rem;">
+    <div class="card-header"><h2>Quick Actions</h2></div>
+    <div class="card-body">
+        <div class="quick-actions">
+            <a href="{{ url_for('main.deposit') }}" class="quick-action-btn">
+                <div class="quick-action-icon" style="background:rgba(16,185,129,0.1);color:var(--success);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                </div>
+                <span>Deposit</span>
+            </a>
+            <a href="{{ url_for('main.withdraw') }}" class="quick-action-btn">
+                <div class="quick-action-icon" style="background:rgba(239,68,68,0.1);color:var(--danger);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                </div>
+                <span>Withdraw</span>
+            </a>
+            <a href="{{ url_for('main.transfer') }}" class="quick-action-btn">
+                <div class="quick-action-icon" style="background:rgba(59,130,246,0.1);color:var(--info);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+                </div>
+                <span>Transfer</span>
+            </a>
+            <a href="{{ url_for('main.transactions') }}" class="quick-action-btn">
+                <div class="quick-action-icon" style="background:rgba(240,185,11,0.1);color:var(--gold-dark);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                </div>
+                <span>History</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="two-col">
+    <!-- CHART -->
+    <div class="content-card">
+        <div class="card-header"><h2>Monthly Overview</h2></div>
+        <div class="chart-container">
+            <canvas id="monthlyChart"></canvas>
+        </div>
+    </div>
+
+    <!-- RECENT TRANSACTIONS -->
+    <div class="content-card">
+        <div class="card-header">
+            <h2>Recent Transactions</h2>
+            <a href="{{ url_for('main.transactions') }}" class="btn btn-sm btn-outline">View All</a>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in recent_transactions %}
+                    <tr>
+                        <td>
+                            {% if txn.transaction_type == 'deposit' %}
+                            <span class="badge badge-success">Deposit</span>
+                            {% elif txn.transaction_type == 'withdrawal' %}
+                            <span class="badge badge-danger">Withdrawal</span>
+                            {% elif txn.transaction_type == 'transfer_in' %}
+                            <span class="badge badge-info">Transfer In</span>
+                            {% else %}
+                            <span class="badge badge-warning">Transfer Out</span>
+                            {% endif %}
+                        </td>
+                        <td class="amount {% if txn.transaction_type in ['deposit', 'transfer_in'] %}positive{% else %}negative{% endif %}">
+                            {% if txn.transaction_type in ['deposit', 'transfer_in'] %}+{% else %}-{% endif %}GH₵ {{ "%.2f"|format(txn.amount) }}
+                        </td>
+                        <td style="color:var(--gray-500);font-size:0.85rem;">{{ txn.created_at.strftime('%b %d, %Y') }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if not recent_transactions %}
+                    <tr><td colspan="3" class="empty-state"><p>No transactions yet</p></td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => initChart('monthlyChart'));
+</script>
+{% endblock %}

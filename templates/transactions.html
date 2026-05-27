@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% block title %}Transactions — BrainiacBank{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Transaction History</h1>
+    <p>View and search your complete transaction history</p>
+</div>
+
+<div class="content-card">
+    <div class="card-header" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+        <h2 style="margin:0;">All Transactions</h2>
+        <div style="display:flex;gap:0.75rem;align-items:center;flex-wrap:wrap;">
+            <a href="{{ url_for('main.download_transactions', type=txn_type) }}" class="btn btn-outline btn-sm" style="min-height:36px;display:flex;align-items:center;gap:6px;font-weight:700;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+                Export CSV
+            </a>
+            <a href="{{ url_for('main.download_transactions_excel', type=txn_type) }}" class="btn btn-outline btn-sm" style="min-height:36px;display:flex;align-items:center;gap:6px;font-weight:700;color:var(--primary);border-color:rgba(156, 240, 39, 0.4);">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                Export Excel (Styled)
+            </a>
+            <a href="{{ url_for('main.download_statement_pdf') }}" target="_blank" class="btn btn-primary btn-sm" style="min-height:36px;display:flex;align-items:center;gap:6px;font-weight:700;">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+                Download PDF Statement
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <!-- FILTERS -->
+        <form method="GET" class="filters-bar">
+            <input type="text" name="search" class="form-control" placeholder="Search by description or reference..." value="{{ search }}" style="max-width:300px;">
+            <select name="type" class="form-control" style="max-width:180px;">
+                <option value="all" {% if txn_type == 'all' %}selected{% endif %}>All Types</option>
+                <option value="deposit" {% if txn_type == 'deposit' %}selected{% endif %}>Deposits</option>
+                <option value="withdrawal" {% if txn_type == 'withdrawal' %}selected{% endif %}>Withdrawals</option>
+                <option value="transfer_in" {% if txn_type == 'transfer_in' %}selected{% endif %}>Transfers In</option>
+                <option value="transfer_out" {% if txn_type == 'transfer_out' %}selected{% endif %}>Transfers Out</option>
+            </select>
+            <button type="submit" class="btn btn-primary btn-sm">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                Filter
+            </button>
+            {% if search or txn_type != 'all' %}
+            <a href="{{ url_for('main.transactions') }}" class="btn btn-outline btn-sm">Clear</a>
+            {% endif %}
+        </form>
+
+        <!-- TABLE -->
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Reference</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                        <th>Amount</th>
+                        <th>Balance After</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for txn in transactions %}
+                    <tr class="fade-in">
+                        <td style="font-family:monospace;font-size:0.8rem;color:var(--gray-500);">{{ txn.reference_number[:15] }}...</td>
+                        <td>
+                            {% if txn.transaction_type == 'deposit' %}
+                            <span class="badge badge-success">Deposit</span>
+                            {% elif txn.transaction_type == 'withdrawal' %}
+                            <span class="badge badge-danger">Withdrawal</span>
+                            {% elif txn.transaction_type == 'transfer_in' %}
+                            <span class="badge badge-info">Transfer In</span>
+                            {% else %}
+                            <span class="badge badge-warning">Transfer Out</span>
+                            {% endif %}
+                        </td>
+                        <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ txn.description }}</td>
+                        <td class="amount {% if txn.transaction_type in ['deposit', 'transfer_in'] %}positive{% else %}negative{% endif %}">
+                            {% if txn.transaction_type in ['deposit', 'transfer_in'] %}+{% else %}-{% endif %}GH₵ {{ "%.2f"|format(txn.amount) }}
+                        </td>
+                        <td style="font-variant-numeric:tabular-nums;">GH₵ {{ "%.2f"|format(txn.balance_after) }}</td>
+                        <td style="color:var(--gray-500);font-size:0.85rem;white-space:nowrap;">{{ txn.created_at.strftime('%b %d, %Y %H:%M') }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if not transactions %}
+                    <tr>
+                        <td colspan="6" class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            <p>No transactions found</p>
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGINATION -->
+        {% if total_pages > 1 %}
+        <div class="pagination">
+            {% if page > 1 %}
+            <a href="?page={{ page-1 }}&type={{ txn_type }}&search={{ search }}">&laquo; Prev</a>
+            {% endif %}
+
+            {% for p in range(1, total_pages + 1) %}
+                {% if p == page %}
+                <span class="active">{{ p }}</span>
+                {% elif p <= 3 or p > total_pages - 3 or (p >= page - 1 and p <= page + 1) %}
+                <a href="?page={{ p }}&type={{ txn_type }}&search={{ search }}">{{ p }}</a>
+                {% elif p == 4 or p == total_pages - 3 %}
+                <span>...</span>
+                {% endif %}
+            {% endfor %}
+
+            {% if page < total_pages %}
+            <a href="?page={{ page+1 }}&type={{ txn_type }}&search={{ search }}">Next &raquo;</a>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

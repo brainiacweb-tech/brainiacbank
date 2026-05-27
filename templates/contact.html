@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Contact Us — BrainiacBank{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Contact BrainiacBank</h1>
+    <p>Have questions or feedback? We would love to hear from you.</p>
+</div>
+
+<div class="content-card" style="max-width: 600px; margin: 0 auto;">
+    <div class="card-header">
+        <h2>Send Us a Message</h2>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" name="name" class="form-control" placeholder="Enter your full name" required value="{% if user %}{{ user.full_name }}{% endif %}">
+            </div>
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" name="email" class="form-control" placeholder="Enter your email address" required value="{% if user %}{{ user.email }}{% endif %}">
+            </div>
+            <div class="form-group">
+                <label>Subject</label>
+                <input type="text" name="subject" class="form-control" placeholder="What can we help you with?" required>
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea name="message" class="form-control" rows="5" placeholder="Write your message details here..." required style="resize:vertical;min-height:100px;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:1.5rem;">Send Message</button>
+        </form>
+
+        <div style="margin-top:2.5rem;border-top:1px solid var(--gray-200);padding-top:1.5rem;font-size:0.88rem;color:var(--gray-600);display:flex;flex-direction:column;gap:0.5rem;" class="contact-details">
+            <div>📍 <strong>BrainiacBank HQ:</strong> Accra Financial Center, Independence Ave, Accra, Ghana</div>
+            <div>📞 <strong>Hotline:</strong> +233 30 200 1234</div>
+            <div>✉️ <strong>Support Email:</strong> support@brainiacbank.com.gh</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

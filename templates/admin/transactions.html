@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}All Transactions — Admin — BrainiacBank{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>All Transactions</h1>
+    <p>Complete transaction log across all accounts</p>
+</div>
+
+<div class="content-card">
+    <div class="card-header">
+        <h2>Transaction Log</h2>
+        <span class="badge badge-primary">{{ transactions|length }} records</span>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>User</th>
+                    <th>Account</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Balance After</th>
+                    <th>Reference</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for txn in transactions %}
+                <tr>
+                    <td style="font-weight:500;">{{ txn.full_name }}</td>
+                    <td style="font-family:monospace;font-size:0.8rem;">{{ txn.account_number }}</td>
+                    <td>
+                        {% if txn.transaction_type == 'deposit' %}
+                        <span class="badge badge-success">Deposit</span>
+                        {% elif txn.transaction_type == 'withdrawal' %}
+                        <span class="badge badge-danger">Withdrawal</span>
+                        {% elif txn.transaction_type == 'transfer_in' %}
+                        <span class="badge badge-info">Transfer In</span>
+                        {% else %}
+                        <span class="badge badge-warning">Transfer Out</span>
+                        {% endif %}
+                    </td>
+                    <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ txn.description }}</td>
+                    <td class="amount {% if txn.transaction_type in ['deposit', 'transfer_in'] %}positive{% else %}negative{% endif %}">
+                        {% if txn.transaction_type in ['deposit', 'transfer_in'] %}+{% else %}-{% endif %}GH₵ {{ "%.2f"|format(txn.amount) }}
+                    </td>
+                    <td style="font-variant-numeric:tabular-nums;">GH₵ {{ "%.2f"|format(txn.balance_after) }}</td>
+                    <td style="font-family:monospace;font-size:0.75rem;color:var(--gray-500);">{{ txn.reference_number[:12] }}...</td>
+                    <td style="font-size:0.85rem;color:var(--gray-500);white-space:nowrap;">{{ txn.created_at.strftime('%b %d, %Y %H:%M') }}</td>
+                </tr>
+                {% endfor %}
+                {% if not transactions %}
+                <tr><td colspan="8" class="empty-state"><p>No transactions recorded</p></td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

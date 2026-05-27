@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Utility & Airtime — BrainiacBank{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Utility & Airtime Payments</h1>
+    <p>Purchase instant cellular airtime, internet data bundles, or pay utility bills directly from your bank balance</p>
+</div>
+
+<div class="two-col" style="margin-bottom:2rem;">
+    <!-- AIRTIME / DATA -->
+    <div class="content-card">
+        <div class="card-header">
+            <h2>Buy Airtime & Data</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" data-validate>
+                <input type="hidden" name="pay_type" value="airtime">
+                
+                <div class="form-group">
+                    <label>Mobile Network Operator</label>
+                    <select name="provider" class="form-control" required>
+                        <option value="MTN">MTN Ghana</option>
+                        <option value="Telecel">Telecel Ghana (Vodafone)</option>
+                        <option value="AirtelTigo">AirtelTigo</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Recipient Phone Number (Ghana)</label>
+                    <input type="tel" name="phone" class="form-control" placeholder="+233 XX XXX XXXX" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Purchase Amount (GH₵)</label>
+                    <input type="number" name="amount" class="form-control" placeholder="10" min="1" max="500" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:1rem;">Recharge Airtime</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- UTILITIES -->
+    <div class="content-card">
+        <div class="card-header">
+            <h2>Pay Utility Bills</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" data-validate>
+                <input type="hidden" name="pay_type" value="utility">
+                
+                <div class="form-group">
+                    <label>Utility Provider</label>
+                    <select name="utility" class="form-control" required>
+                        <option value="ECG">Electricity Company of Ghana (ECG)</option>
+                        <option value="GWCL">Ghana Water Company Limited (GWCL)</option>
+                        <option value="DSTV">DSTV Ghana</option>
+                        <option value="GOtv">GOtv Ghana</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Meter / Customer Account Number</label>
+                    <input type="text" name="meter_number" class="form-control" placeholder="E.g. ECG-10029302-W" required>
+                </div>
+                
+                <div class="form-group">
+                    <label>Payment Amount (GH₵)</label>
+                    <input type="number" name="amount" class="form-control" placeholder="50" min="5" max="5000" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:1rem;">Process Bill Payment</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

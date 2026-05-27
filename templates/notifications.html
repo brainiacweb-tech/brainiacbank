@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}Notifications — BrainiacBank{% endblock %}
+{% block content %}
+<div class="page-header" style="display:flex;justify-content:between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+    <div>
+        <h1>Notification Center</h1>
+        <p>Stay up to date with your accounts, transfers, card alerts, and smart scans.</p>
+    </div>
+    {% if notifications %}
+    <div>
+        <form action="{{ url_for('main.read_all_notifications') }}" method="POST" style="margin:0;">
+            <button type="submit" class="btn btn-outline" style="min-height:44px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:2px;"><polyline points="20 6 9 17 4 12"/></svg>
+                Mark All as Read
+            </button>
+        </form>
+    </div>
+    {% endif %}
+</div>
+
+<div class="content-card">
+    <div class="card-header">
+        <h2>Recent Updates</h2>
+        <span class="badge badge-primary">{{ notif_count }} Unread</span>
+    </div>
+    <div class="card-body" style="padding:0;">
+        {% if not notifications %}
+        <div class="empty-state" style="padding:4rem 2rem;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/>
+            </svg>
+            <p style="font-weight:500;font-size:0.95rem;color:var(--gray-500);margin-top:0.5rem;">Your notification log is clear</p>
+            <p style="font-size:0.8rem;color:var(--gray-400);margin-top:0.25rem;">We will alert you here of deposits, transfers, and security anomalies.</p>
+        </div>
+        {% else %}
+        <div class="notif-list-container">
+            {% for n in notifications %}
+            <div class="notif-page-item {% if not n.is_read %}unread{% endif %}" onclick="markReadPage({{ n.id }}, this)" style="display:flex;gap:1.25rem;padding:1.5rem;border-bottom:1px solid var(--gray-100);cursor:pointer;transition:var(--transition);position:relative;">
+                
+                <!-- Icon Indicator -->
+                <div class="notif-page-icon" style="width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:rgba(0,0,0,0.03);">
+                    {% if n.notif_type == 'transaction' %}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--teal)" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"/><rect x="5" y="5" width="14" height="14" rx="1" ry="1"/><line x1="12" y1="5" x2="12" y2="19"/></svg>
+                    {% elif n.notif_type == 'security' %}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--danger)" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    {% else %}
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--info)" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                    {% endif %}
+                </div>
+
+                <!-- Text Content -->
+                <div style="flex-grow:1;display:flex;flex-direction:column;gap:3px;">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:0.5rem;">
+                        <h3 class="notif-page-title" style="font-size:0.92rem;margin:0;font-weight:{% if not n.is_read %}700{% else %}500{% endif %};color:var(--dark);">{{ n.title }}</h3>
+                        <span class="notif-page-time" style="font-size:0.75rem;color:var(--gray-400);">{{ n.created_at }}</span>
+                    </div>
+                    <p class="notif-page-message" style="font-size:0.85rem;color:var(--gray-600);margin:0;line-height:1.45;">{{ n.message }}</p>
+                </div>
+
+                <!-- Unread Dot Failsafe -->
+                {% if not n.is_read %}
+                <div class="unread-dot" style="position:absolute;right:1.25rem;top:50%;transform:translateY(-50%);width:8px;height:8px;border-radius:50%;background-color:var(--primary);box-shadow:0 0 8px var(--primary);"></div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+/* Additional helper classes for the notifications page */
+.notif-page-item {
+    border-bottom: 1.5px solid var(--gray-100) !important;
+}
+.notif-page-item:last-child {
+    border-bottom: none !important;
+}
+.notif-page-item:hover {
+    background-color: rgba(156, 240, 39, 0.02) !important;
+}
+.notif-page-item.unread {
+    background-color: rgba(156, 240, 39, 0.04) !important;
+}
+
+body.dark-theme .notif-page-item {
+    border-bottom-color: rgba(255, 255, 255, 0.05) !important;
+}
+body.dark-theme .notif-page-item:hover {
+    background-color: rgba(255, 255, 255, 0.02) !important;
+}
+body.dark-theme .notif-page-item.unread {
+    background-color: rgba(156, 240, 39, 0.08) !important;
+}
+body.dark-theme .notif-page-icon {
+    background: rgba(255, 255, 255, 0.04) !important;
+}
+body.dark-theme .notif-page-title {
+    color: #ffffff !important;
+}
+body.dark-theme .notif-page-message {
+    color: #cbd5e1 !important;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function markReadPage(id, el) {
+    if (!el.classList.contains('unread')) return; // Already read
+
+    fetch(`/notifications/${id}/read`, { method: 'POST' })
+        .then(response => response.json())
+        .then(data => {
+            if (data.ok) {
+                // Instantly remove unread styling
+                el.classList.remove('unread');
+                
+                // Dim title weight
+                const title = el.querySelector('.notif-page-title');
+                if (title) title.style.fontWeight = '500';
+                
+                // Hide unread dot
+                const dot = el.querySelector('.unread-dot');
+                if (dot) dot.style.display = 'none';
+
+                // Query and fetch dynamic updates to trigger base bells
+                if (typeof fetchNotifications === 'function') {
+                    fetchNotifications();
+                }
+            }
+        }).catch(err => console.error("Error marking notification read:", err));
+}
+</script>
+{% endblock %}

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Fixed Deposits — BrainiacBank{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Fixed Deposit Management</h1>
+    <p>Invest your savings in high-yield certificates of deposit with up to 15% guaranteed interest</p>
+</div>
+
+<div class="stats-grid" style="margin-bottom:2rem;">
+    <div class="stat-card">
+        <div class="stat-icon teal">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        </div>
+        <div class="stat-label">Yield Rates (p.a.)</div>
+        <div class="stat-value">15.0% flat</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon green">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <div class="stat-label">Min Holding Term</div>
+        <div class="stat-value">3 Months</div>
+    </div>
+</div>
+
+<div class="two-col" style="margin-bottom:2rem;">
+    <!-- OPEN ACCOUNT -->
+    <div class="content-card">
+        <div class="card-header">
+            <h2>Open Investment Account</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" id="fdForm" data-validate>
+                <div class="form-group">
+                    <label>Investment Principal (GH₵)</label>
+                    <input type="number" name="amount" id="fdAmount" class="form-control" placeholder="Minimum GH₵ 50" min="50" required>
+                </div>
+                <div class="form-group">
+                    <label>Investment Term Duration</label>
+                    <select name="duration" id="fdDuration" class="form-control" required>
+                        <option value="3" selected>3 Months (15% p.a.)</option>
+                        <option value="6">6 Months (15% p.a.)</option>
+                        <option value="12">12 Months (15% p.a.)</option>
+                    </select>
+                </div>
+                
+                <!-- CALC BOX -->
+                <div style="background:var(--gray-50);padding:1rem;border-radius:var(--radius-sm);margin-bottom:1.5rem;font-size:0.85rem;border:1px dashed var(--gray-300);">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+                        <span style="color:var(--gray-500);">Maturity Term Date</span>
+                        <span style="font-weight:600;" id="fdMaturityDate">—</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:0.5rem;">
+                        <span style="color:var(--gray-500);">Interest Yield Earned</span>
+                        <span style="font-weight:600;color:var(--success);" id="fdYield">GH₵ 0.00</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;font-weight:700;border-top:1px solid var(--gray-200);padding-top:0.5rem;color:var(--primary);">
+                        <span>Total Maturity Return</span>
+                        <span id="fdTotal">GH₵ 0.00</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Lock Investment Principal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ACTIVE DEPOSITS -->
+    <div class="content-card">
+        <div class="card-header">
+            <h2>Active Investments</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Principal</th>
+                        <th>Duration</th>
+                        <th>Matures On</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for fd in fixed_deposits %}
+                    <tr>
+                        <td style="font-weight:600;">GH₵ {{ "%.2f"|format(fd.amount) }}</td>
+                        <td>{{ fd.duration_months }} Months (15.0%)</td>
+                        <td style="color:var(--gray-600);">{{ fd.maturity_date.strftime('%b %d, %Y') }}</td>
+                        <td>
+                            {% if fd.status == 'active' %}
+                            <span class="badge badge-success">Earning Interest</span>
+                            {% elif fd.status == 'matured' %}
+                            <span class="badge badge-primary">Completed</span>
+                            {% else %}
+                            <span class="badge badge-danger">Withdrawn Early</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if fd.status == 'active' %}
+                            <form method="POST" action="{{ url_for('main.withdraw_fd', fd_id=fd.id) }}" onsubmit="return confirm('Withdraw your funds? Maturity returns will be paid out.');">
+                                <button type="submit" class="btn btn-primary btn-sm">Liquidate</button>
+                            </form>
+                            {% else %}
+                            —
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not fixed_deposits %}
+                    <tr><td colspan="5" class="empty-state"><p>No active fixed deposits yet</p></td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const amountInput = document.getElementById('fdAmount');
+    const durationSelect = document.getElementById('fdDuration');
+    const fdMaturityDate = document.getElementById('fdMaturityDate');
+    const fdYield = document.getElementById('fdYield');
+    const fdTotal = document.getElementById('fdTotal');
+
+    function calculate() {
+        const amount = parseFloat(amountInput.value || 0);
+        const duration = parseInt(durationSelect.value);
+        const rate = 15.0 / 100;
+        
+        const yieldEarned = amount * rate * (duration / 12);
+        const total = amount + yieldEarned;
+
+        // Calculate estimated date
+        const maturity = new Date();
+        maturity.setMonth(maturity.getMonth() + duration);
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+
+        fdMaturityDate.textContent = maturity.toLocaleDateString('en-US', options);
+        fdYield.textContent = 'GH₵ ' + yieldEarned.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        fdTotal.textContent = 'GH₵ ' + total.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+    }
+
+    amountInput.addEventListener('input', calculate);
+    durationSelect.addEventListener('change', calculate);
+    calculate();
+});
+</script>
+{% endblock %}

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32">
+    <!-- Dark Background circular container -->
+    <rect width="24" height="24" rx="12" fill="#0f172a"/>
+    <!-- Outer elegant shield border in Accent Lime -->
+    <path d="M12 4.5L5.5 8l1 6.5 5.5 3.5 5.5-3.5 1-6.5-6.5-3.5z" stroke="#9CF027" stroke-width="1.2" fill="none"/>
+    <!-- Internal Stylized Brain Nodes & Bank pillars -->
+    <path d="M12 7.5v6M10 9.5h4M10 11.5h4M8.5 9.5v2M15.5 9.5v2" stroke="#ffffff" stroke-width="1" stroke-linecap="round"/>
+    <!-- Brain neural arches -->
+    <path d="M12 7.5a2.5 2.5 0 0 0-2.5 2.5c0 1 .6 1.6 1.3 2M12 7.5a2.5 2.5 0 0 1 2.5 2.5c0 1-.6 1.6-1.3 2" stroke="#9CF027" stroke-dasharray="0.8 0.8" stroke-width="1" fill="none"/>
+</svg>

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy — BrainiacBank{% endblock %}
+{% block content %}
+<div class="page-header" style="display:flex;align-items:center;gap:0.75rem;">
+    <div style="width:48px;height:48px;border-radius:12px;background:rgba(156,240,39,0.1);display:flex;align-items:center;justify-content:center;color:var(--primary);">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    </div>
+    <div>
+        <h1 style="margin:0;">Privacy Policy</h1>
+        <p style="margin:0;font-size:0.85rem;color:var(--gray-500);">Last updated: May 27, 2026</p>
+    </div>
+</div>
+
+<div class="content-card" style="max-width: 800px; margin: 2rem auto;">
+    <div class="card-header" style="display:flex;align-items:center;gap:10px;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--primary)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        <h2 style="margin:0;">Our Commitment to Your Privacy</h2>
+    </div>
+    <div class="card-body" style="line-height:1.8;">
+        <p style="margin-bottom:1.5rem;font-size:0.95rem;color:var(--gray-600);">At BrainiacBank, we respect your privacy and are committed to protecting your personal data. This privacy policy explains how we collect, use, and safeguard your information when you use our digital banking platform.</p>
+        
+        <div style="display:flex;flex-direction:column;gap:1.5rem;margin-top:2rem;">
+            
+            <div class="privacy-section" style="padding:1.25rem;border-radius:12px;border:1px solid var(--gray-200);background:rgba(255,255,255,0.2);">
+                <h3 style="margin:0 0 0.5rem 0;color:var(--primary);font-size:1.1rem;display:flex;align-items:center;gap:8px;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    1. Information We Collect
+                </h3>
+                <p style="margin:0;font-size:0.88rem;color:var(--gray-600);">We collect information that you provide directly to us when opening an account, including your full name, email address, phone number starting with +233, and physical address for card orders. We also collect verification documents (KYC) to comply with regulatory standards.</p>
+            </div>
+
+            <div class="privacy-section" style="padding:1.25rem;border-radius:12px;border:1px solid var(--gray-200);background:rgba(255,255,255,0.2);">
+                <h3 style="margin:0 0 0.5rem 0;color:var(--primary);font-size:1.1rem;display:flex;align-items:center;gap:8px;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/><path d="M16 12a4 4 0 0 1-8 0"/></svg>
+                    2. How We Use Your Information
+                </h3>
+                <p style="margin:0;font-size:0.88rem;color:var(--gray-600);">Your data is utilized solely to provide secure financial services, process transactions, prevent fraudulent actions, issue virtual and physical debit cards, and send automated notifications about your deposits and withdrawals.</p>
+            </div>
+
+            <div class="privacy-section" style="padding:1.25rem;border-radius:12px;border:1px solid var(--gray-200);background:rgba(255,255,255,0.2);">
+                <h3 style="margin:0 0 0.5rem 0;color:var(--primary);font-size:1.1rem;display:flex;align-items:center;gap:8px;">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    3. Information Security
+                </h3>
+                <p style="margin:0;font-size:0.88rem;color:var(--gray-600);">We employ advanced 256-bit encryption protocols, secure session management, and robust database constraints to protect your funds and personal information. We never sell or share your personal data with third-party advertisers.</p>
+            </div>
+            
+        </div>
+        
+        <div style="margin-top:2.5rem;display:flex;gap:1rem;">
+            <a href="/" class="btn btn-outline" style="min-height:44px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:4px;"><polyline points="15 18 9 12 15 6"/></svg>
+                Back to Home
+            </a>
+            <a href="{{ url_for('main.terms') }}" class="btn btn-primary" style="min-height:44px;">
+                Terms of Service
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-left:4px;"><polyline points="9 18 15 12 9 6"/></svg>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+body.dark-theme .privacy-section {
+    border-color: rgba(255, 255, 255, 0.08) !important;
+    background: rgba(30, 41, 59, 0.2) !important;
+}
+body.dark-theme .privacy-section p {
+    color: #cbd5e1 !important;
+}
+</style>
+{% endblock %}

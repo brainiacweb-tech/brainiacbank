@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% block title %}Virtual Cards — BrainiacBank{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>Virtual Debit Cards</h1>
+    <p>Create and manage secure, flat-styled cards for online transactions</p>
+</div>
+
+<div style="margin-bottom:2rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+    <div class="card-count" style="font-weight:600;color:var(--gray-500);">
+        Active Cards: <span style="color:var(--primary);">{{ cards|length }} / 3</span>
+    </div>
+    {% if cards|length < 3 %}
+    <button class="btn btn-primary" onclick="document.getElementById('createCardModal').style.display='block'">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Request Virtual Card
+    </button>
+    {% endif %}
+</div>
+
+<!-- CARDS GRID -->
+<div class="cards-grid">
+    {% for card in cards %}
+    <div style="display:flex;flex-direction:column;gap:1rem;">
+        <div class="virtual-card {{ card.card_style }}">
+            <div class="card-pattern"></div>
+            <div class="card-top">
+                <div class="card-chip"></div>
+                <div class="card-brand">
+                    {% if card.card_type == 'visa' %}
+                        <div class="brand-logo visa" style="color:rgba(255,255,255,0.95);margin-top:2px;">
+                            <svg width="55" height="18" viewBox="0 0 500 160" fill="currentColor" style="display:block;">
+                                <path d="M195.9 14.8l-30.8 130.4h37.4l30.8-130.4zM277.6 14.8h-29.2c-9 0-15.7 2.6-19.6 11.6l-55.6 118.8h39.2l7.8-21.6h48c1.1 5 4.9 21.6 4.9 21.6h34.6l-30.1-130.4zm-14.8 84.4h-31.4l15.7-43.2zM380.2 14.8c-7.7-3.2-19.4-6.4-34.1-6.4-37.6 0-64 19.9-64.2 48.3-.3 21.1 19 32.8 33.5 39.9 14.9 7.2 19.8 11.9 19.8 18.3-.1 9.9-11.9 14.4-22.9 14.4-15.3 0-23.7-2.4-36.3-7.9l-5.1-2.4-5.3 33.1c9 4.1 25.5 7.7 42.7 7.9 39.8 0 65.7-19.6 66-50 0.3-16.7-10-29.4-31.9-39.8-14.5-7.3-23.3-12.2-23.2-19.6 0-6.6 7.3-13.6 23.2-13.6 12.9-.3 22.3 2.7 29.5 5.9l3.5 1.6zM88.7 14.8L51.9 104l-4-20.2C38.9 51.5 12.5 24.3 0 14.8l36.5 90.4L74.8 14.8z"/>
+                            </svg>
+                        </div>
+                    {% else %}
+                        <div class="brand-logo mastercard" style="display:flex;align-items:center;gap:6px;">
+                            <svg width="36" height="22" viewBox="0 0 40 24" style="display:block;">
+                                <circle cx="12" cy="12" r="12" fill="#EB001B" opacity="0.95"/>
+                                <circle cx="28" cy="12" r="12" fill="#F79E1B" opacity="0.95"/>
+                                <path d="M20 3.7c2 2.1 3.2 4.9 3.2 8.3s-1.2 6.2-3.2 8.3c-2-2.1-3.2-4.9-3.2-8.3s1.2-6.2 3.2-8.3z" fill="#FF5F00"/>
+                            </svg>
+                            <span style="font-family:'Montserrat',sans-serif;font-weight:800;font-size:0.75rem;letter-spacing:0.5px;color:rgba(255,255,255,0.95);">Mastercard</span>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="card-number-display">
+                {{ card.card_number }}
+            </div>
+
+            <div class="card-bottom">
+                <div>
+                    <div class="card-holder-label">Card Holder</div>
+                    <div class="card-holder-name">{{ card.card_holder }}</div>
+                </div>
+                <div style="text-align:right;">
+                    <div class="card-expiry-label">Expires</div>
+                    <div class="card-expiry-value">{{ "%02d"|format(card.expiry_month) }}/{{ card.expiry_year|string|slice(-2) }}</div>
+                </div>
+            </div>
+
+            {% if not card.is_active %}
+            <div class="card-frozen-overlay">FROZEN</div>
+            {% endif %}
+        </div>
+
+        <!-- DETAILS & ACTIONS -->
+        <div class="content-card" style="padding:1rem;margin-top:-0.5rem;border-top-left-radius:0;border-top-right-radius:0;">
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.85rem;margin-bottom:0.75rem;">
+                <span style="color:var(--gray-500);">CVV Number</span>
+                <span style="font-family:monospace;font-weight:700;background:var(--gray-100);padding:2px 8px;border-radius:4px;" class="cvv-display" onmouseover="this.textContent='{{ card.cvv }}'" onmouseout="this.textContent='***'">*** (Hover to see)</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.85rem;margin-bottom:1rem;">
+                <span style="color:var(--gray-500);">Daily Limit</span>
+                <span style="font-weight:600;">GH₵ {{ "%.2f"|format(card.daily_limit) }}</span>
+            </div>
+            <div class="card-actions" style="display:flex;gap:0.5rem;width:100%;">
+                <form method="POST" action="{{ url_for('main.toggle_card', card_id=card.id) }}" style="flex:1;">
+                    <button type="submit" class="btn btn-sm {% if card.is_active %}btn-outline{% else %}btn-success{% endif %}" style="width:100%;">
+                        {% if card.is_active %}Freeze{% else %}Unfreeze{% endif %}
+                    </button>
+                </form>
+                <form method="POST" action="{{ url_for('main.delete_card', card_id=card.id) }}" style="flex:1;" onsubmit="return confirm('Delete this virtual card?');">
+                    <button type="submit" class="btn btn-sm btn-danger" style="width:100%;">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+
+    {% if not cards %}
+    <div class="content-card" style="grid-column:1/-1;padding:3rem;text-align:center;color:var(--gray-400);">
+        <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:1rem;"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <p>You do not have any virtual debit cards yet.</p>
+        <button class="btn btn-primary btn-sm" style="margin-top:1rem;" onclick="document.getElementById('createCardModal').style.display='block'">Create New Card</button>
+    </div>
+    {% endif %}
+</div>
+
+<!-- CREATE MODAL -->
+<div id="createCardModal" class="modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:9999;align-items:center;justify-content:center;">
+    <div class="content-card" style="width:100%;max-width:440px;margin:10% auto;box-shadow:var(--shadow-lg);">
+        <div class="card-header">
+            <h2>Request Virtual Card</h2>
+            <button onclick="document.getElementById('createCardModal').style.display='none'" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">&times;</button>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('main.create_card') }}">
+                <div class="form-group">
+                    <label>Card Brand</label>
+                    <select name="card_type" class="form-control" required>
+                        <option value="visa">Visa Standard</option>
+                        <option value="mastercard">Mastercard Executive</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Card Design (Flat Palette)</label>
+                    <select name="card_style" class="form-control" required>
+                        <option value="ocean">Ocean Blue (Premium Royal Blue)</option>
+                        <option value="dark">Slate Carbon (Elegant Grey)</option>
+                        <option value="emerald">Emerald Forest (Deep Teal)</option>
+                        <option value="sunset">Crimson Ruby (Rich Burgundy)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:1rem;">Generate Virtual Card</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

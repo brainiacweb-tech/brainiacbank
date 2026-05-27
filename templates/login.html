@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Login — BrainiacBank{% endblock %}
+{% block content %}
+<div class="auth-page">
+    <div class="auth-container">
+        <div style="text-align:center;margin-bottom:2rem;">
+            <a href="/" class="navbar-brand" style="justify-content:center;font-size:1.5rem;">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="BrainiacBank Logo" style="width:36px;height:36px;object-fit:contain;margin-right:8px;">
+                <span>Brainiac<span style="color:var(--primary);">Bank</span></span>
+            </a>
+        </div>
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Welcome Back</h1>
+                <p>Sign in to your account</p>
+            </div>
+            <form method="POST" data-validate>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" class="form-control" placeholder="you@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <div class="password-wrapper">
+                        <input type="password" name="password" class="form-control" placeholder="Enter your password" required>
+                        <button type="button" class="password-toggle" aria-label="Toggle password">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                        </button>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg" style="width:100%;justify-content:center;">Sign In</button>
+            </form>
+            <div class="auth-footer">
+                Don't have an account? <a href="{{ url_for('auth.register') }}">Create one</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

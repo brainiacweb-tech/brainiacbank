@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}ATM Card Request — BrainiacBank{% endblock %}
+{% block content %}
+<div class="page-header">
+    <h1>ATM Card Requests</h1>
+    <p>Request physical plastic Visa or Mastercard ATM debit cards delivered directly to your home address in Ghana</p>
+</div>
+
+<div class="two-col" style="margin-bottom:2rem;">
+    <!-- REQUEST FORM -->
+    <div class="content-card">
+        <div class="card-header">
+            <h2>Order Physical Card</h2>
+        </div>
+        <div class="card-body">
+            <form method="POST" data-validate>
+                <div class="form-group">
+                    <label>Card Network</label>
+                    <select name="card_type" class="form-control" required>
+                        <option value="visa">Visa Platinum Debit</option>
+                        <option value="mastercard">Mastercard Executive Debit</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ghana Delivery Address (Digital Address / Street)</label>
+                    <textarea name="address" rows="3" class="form-control" placeholder="E.g. GA-144-8889, Ring Road East, Accra, Ghana" required></textarea>
+                </div>
+                
+                <div style="background:var(--gray-50);padding:1rem;border-radius:var(--radius-sm);margin-bottom:1.5rem;font-size:0.8rem;color:var(--gray-600);border:1px solid var(--gray-200);">
+                    <strong>Delivery Terms:</strong> Physical card delivery takes 3 to 5 banking days inside Accra/Kumasi, and 5 to 7 days for other regions. Cards are shipped deactivated for safety.
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Submit Order Request</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- REQUESTS TABLE -->
+    <div class="content-card">
+        <div class="card-header">
+            <h2>Delivery Statuses</h2>
+        </div>
+        <div class="table-responsive">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Card Brand</th>
+                        <th>Delivery Address</th>
+                        <th>Status</th>
+                        <th>Ordered On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in requests %}
+                    <tr>
+                        <td style="font-weight:600;text-transform:capitalize;">{{ r.card_type.upper() }}</td>
+                        <td style="font-size:0.85rem;max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">{{ r.delivery_address }}</td>
+                        <td>
+                            {% if r.status == 'pending' %}
+                            <span class="badge badge-warning">Processing</span>
+                            {% elif r.status == 'approved' %}
+                            <span class="badge badge-info">Approved</span>
+                            {% elif r.status == 'dispatched' %}
+                            <span class="badge badge-primary">In Transit</span>
+                            {% else %}
+                            <span class="badge badge-success">Delivered</span>
+                            {% endif %}
+                        </td>
+                        <td style="font-size:0.8rem;color:var(--gray-500);">{{ r.created_at.strftime('%b %d, %Y') }}</td>
+                    </tr>
+                    {% endfor %}
+                    {% if not requests %}
+                    <tr><td colspan="4" class="empty-state"><p>No card orders placed yet</p></td></tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

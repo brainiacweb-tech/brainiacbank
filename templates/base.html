@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}BrainiacBank{% endblock %}</title>
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/favicon.png') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    {% if session.get('user_id') %}
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <div style="display:flex;align-items:center;gap:1rem;">
+            <button class="mobile-toggle" aria-label="Menu">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            </button>
+            <a href="{{ url_for('main.dashboard') }}" class="navbar-brand">
+                <img src="{{ url_for('static', filename='images/logo.png') }}" alt="BrainiacBank Logo" style="width:24px;height:24px;object-fit:contain;margin-right:6px;">
+                BrainiacBank
+            </a>
+        </div>
+        <div class="navbar-user">
+            <!-- Theme Toggle Button -->
+            <button id="themeToggle" style="background:none;border:none;cursor:pointer;padding:0.4rem;color:var(--gray-600);display:flex;align-items:center;" aria-label="Toggle Theme">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            </button>
+
+            <!-- Notification Bell -->
+            <div class="notif-dropdown" style="position:relative;">
+                <button class="notif-bell" id="notifBell" aria-label="Notifications" style="background:none;border:none;cursor:pointer;position:relative;padding:0.4rem;">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--gray-600)" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                    {% if notif_count is defined and notif_count > 0 %}
+                    <span class="notif-badge" id="notifBadge">{{ notif_count }}</span>
+                    {% endif %}
+                </button>
+                <div class="notif-popup" id="notifPopup" style="display:none;">
+                    <div class="notif-popup-header">
+                        <strong>Notifications</strong>
+                        <a href="{{ url_for('main.notifications') }}" style="font-size:0.8rem;color:var(--primary);">View All</a>
+                    </div>
+                    <div class="notif-popup-list" id="notifList"></div>
+                </div>
+            </div>
+
+            <span style="font-size:0.9rem;color:var(--gray-700);">{{ session.get('user_name', 'User') }}</span>
+            <div class="navbar-avatar">
+                {% if session.get('profile_picture') %}
+                <img src="{{ url_for('static', filename='uploads/' + session.get('profile_picture')) }}" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">
+                {% else %}
+                {{ session.get('user_name', 'U')[0] }}
+                {% endif %}
+            </div>
+            <a href="{{ url_for('auth.logout') }}" class="btn btn-sm btn-outline">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+                Logout
+            </a>
+        </div>
+    </nav>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <ul class="sidebar-nav">
+            <li><a href="{{ url_for('main.dashboard') }}" class="{% if request.endpoint == 'main.dashboard' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                Dashboard
+            </a></li>
+
+            <div class="sidebar-section">Banking</div>
+
+            <li><a href="{{ url_for('main.deposit') }}" class="{% if request.endpoint == 'main.deposit' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+                Deposit
+            </a></li>
+            <li><a href="{{ url_for('main.withdraw') }}" class="{% if request.endpoint == 'main.withdraw' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+                Withdraw
+            </a></li>
+            <li><a href="{{ url_for('main.transfer') }}" class="{% if request.endpoint == 'main.transfer' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 014-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+                Transfer
+            </a></li>
+            <li><a href="{{ url_for('main.loans') }}" class="{% if request.endpoint == 'main.loans' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="9" x2="15" y2="9"/><line x1="9" y1="13" x2="15" y2="13"/></svg>
+                Loans & Credit
+            </a></li>
+            <li><a href="{{ url_for('main.fixed_deposits') }}" class="{% if request.endpoint == 'main.fixed_deposits' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+                Fixed Deposits
+            </a></li>
+            <li><a href="{{ url_for('main.payments') }}" class="{% if request.endpoint == 'main.payments' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"/><rect x="5" y="5" width="14" height="14" rx="1" ry="1"/><line x1="12" y1="5" x2="12" y2="19"/></svg>
+                Utilities & Airtime
+            </a></li>
+            <li><a href="{{ url_for('main.transactions') }}" class="{% if request.endpoint == 'main.transactions' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Transactions
+            </a></li>
+
+            <div class="sidebar-section">Services</div>
+
+            <li><a href="{{ url_for('main.cards') }}" class="{% if request.endpoint == 'main.cards' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Virtual Cards
+            </a></li>
+            <li><a href="{{ url_for('main.atm_request') }}" class="{% if request.endpoint == 'main.atm_request' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                Order ATM Card
+            </a></li>
+            <li><a href="{{ url_for('main.savings_goals') }}" class="{% if request.endpoint == 'main.savings_goals' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+                Goals & Beneficiaries
+            </a></li>
+            <li><a href="{{ url_for('main.notifications') }}" class="{% if request.endpoint == 'main.notifications' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+                Notifications
+                {% if notif_count is defined and notif_count > 0 %}
+                <span class="sidebar-badge">{{ notif_count }}</span>
+                {% endif %}
+            </a></li>
+
+            <div class="sidebar-section">Account</div>
+
+            <li><a href="{{ url_for('main.profile') }}" class="{% if request.endpoint == 'main.profile' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                Profile
+            </a></li>
+
+            <div class="sidebar-section">Help & Support</div>
+            <li><a href="{{ url_for('main.support') }}" class="{% if request.endpoint == 'main.support' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                Support Tickets
+            </a></li>
+            <li><a href="{{ url_for('main.contact') }}" class="{% if request.endpoint == 'main.contact' %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+                Contact Us
+            </a></li>
+
+            {% if session.get('is_admin') %}
+            <div class="sidebar-section">Admin</div>
+            <li><a href="{{ url_for('admin.dashboard') }}" class="{% if 'admin' in request.endpoint %}active{% endif %}">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                Admin Panel
+            </a></li>
+            {% endif %}
+        </ul>
+    </aside>
+    {% endif %}
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-container">
+        {% for category, message in messages %}
+        <div class="flash-message {{ category }}">
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <!-- MAIN -->
+    <main {% if session.get('user_id') %}class="main-content fade-in"{% else %}class="logged-out-main"{% endif %}>
+        {% block content %}{% endblock %}
+        
+        <!-- DASHBOARD FOOTER -->
+        {% if session.get('user_id') %}
+        <footer class="dashboard-footer" style="margin-top:4rem;padding-top:2rem;border-top:1.5px solid var(--gray-200);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1.5rem;font-size:0.8rem;color:var(--gray-500);">
+            <div style="display:flex;flex-direction:column;gap:4px;">
+                <span>&copy; 2026 BrainiacBank. All rights reserved. Secure Ghanaian Digital Banking.</span>
+                <span style="font-weight:600;color:var(--primary);">Developed by Francis Kusi</span>
+            </div>
+            <div style="display:flex;gap:1.5rem;align-items:center;flex-wrap:wrap;">
+                <a href="{{ url_for('main.privacy') }}" style="display:flex;align-items:center;gap:6px;transition:var(--transition);font-weight:500;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                    Privacy Policy
+                </a>
+                <a href="{{ url_for('main.terms') }}" style="display:flex;align-items:center;gap:6px;transition:var(--transition);font-weight:500;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Terms of Service
+                </a>
+                <a href="{{ url_for('main.support') }}" style="display:flex;align-items:center;gap:6px;transition:var(--transition);font-weight:500;">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    Support Center
+                </a>
+            </div>
+        </footer>
+        {% endif %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script>
+    // Notification bell dropdown
+    document.addEventListener('DOMContentLoaded', function() {
+        const bell = document.getElementById('notifBell');
+        const popup = document.getElementById('notifPopup');
+        if (bell && popup) {
+            bell.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (popup.style.display === 'none') {
+                    popup.style.display = 'block';
+                    fetchNotifications();
+                } else {
+                    popup.style.display = 'none';
+                }
+            });
+            document.addEventListener('click', function() { popup.style.display = 'none'; });
+            popup.addEventListener('click', function(e) { e.stopPropagation(); });
+        }
+    });
+
+    function fetchNotifications() {
+        fetch('/api/notifications')
+            .then(r => r.json())
+            .then(data => {
+                const list = document.getElementById('notifList');
+                const badge = document.getElementById('notifBadge');
+                if (!list) return;
+                if (data.notifications.length === 0) {
+                    list.innerHTML = '<div style="padding:1rem;text-align:center;color:var(--gray-400);font-size:0.85rem;">No notifications</div>';
+                } else {
+                    list.innerHTML = data.notifications.map(n => `
+                        <div class="notif-popup-item ${n.is_read ? '' : 'unread'}" onclick="markRead(${n.id}, this)">
+                            <div class="notif-popup-title" style="font-weight:${n.is_read ? '400' : '700'};">${n.title}</div>
+                            <div class="notif-popup-message">${n.message}</div>
+                            <div class="notif-popup-time">${n.created_at}</div>
+                        </div>
+                    `).join('');
+                }
+                if (badge) {
+                    badge.textContent = data.count;
+                    badge.style.display = data.count > 0 ? 'flex' : 'none';
+                }
+            });
+    }
+
+    function markRead(id, el) {
+        fetch(`/notifications/${id}/read`, { method: 'POST' })
+            .then(() => { el.classList.remove('unread'); fetchNotifications(); });
+    }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
