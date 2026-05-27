@@ -167,13 +167,13 @@ class Transaction:
     def get_monthly_summary(user_id):
         return execute_query(
             """SELECT
-                 DATE_FORMAT(created_at, '%%Y-%%m') as month,
+                 TO_CHAR(created_at, 'YYYY-MM') as month,
                  transaction_type,
                  SUM(amount) as total,
                  COUNT(*) as count
                FROM transactions
                WHERE user_id = %s
-               GROUP BY month, transaction_type
+               GROUP BY TO_CHAR(created_at, 'YYYY-MM'), transaction_type
                ORDER BY month DESC
                LIMIT 24""",
             (user_id,), fetch_all=True

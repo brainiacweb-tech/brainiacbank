@@ -159,9 +159,9 @@ def all_transactions():
 def stats():
     users = User.get_all_users()
     result = execute_query(
-        """SELECT DATE_FORMAT(created_at, '%%Y-%%m') as month, COUNT(*) as count
+        """SELECT TO_CHAR(created_at, 'YYYY-MM') as month, COUNT(*) as count
            FROM users WHERE is_admin = 0
-           GROUP BY month ORDER BY month DESC LIMIT 6""",
+           GROUP BY TO_CHAR(created_at, 'YYYY-MM') ORDER BY month DESC LIMIT 6""",
         fetch_all=True,
     )
     return jsonify({
