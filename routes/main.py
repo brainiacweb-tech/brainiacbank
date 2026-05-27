@@ -22,6 +22,39 @@ def allowed_file(filename):
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+@main_bp.route("/health")
+def health():
+    """Health check endpoint — shows DB connection status and resolved env vars."""
+    import traceback
+    status = {}
+    # Show resolved env vars (mask password)
+    status["env"] = {
+        "MYSQLHOST": os.getenv("MYSQLHOST", "(not set)"),
+        "MYSQLUSER": os.getenv("MYSQLUSER", "(not set)"),
+        "MYSQLPORT": os.getenv("MYSQLPORT", "(not set)"),
+        "MYSQLDATABASE": os.getenv("MYSQLDATABASE", "(not set)"),
+        "MYSQL_PRIVATE_URL": "(set)" if os.getenv("MYSQL_PRIVATE_URL") else "(not set)",
+        "MYSQL_URL": "(set)" if os.getenv("MYSQL_URL") else "(not set)",
+        "DATABASE_URL": "(set)" if os.getenv("DATABASE_URL") else "(not set)",
+        "RAILWAY_ENVIRONMENT": os.getenv("RAILWAY_ENVIRONMENT", "(not set)"),
+        "PORT": os.getenv("PORT", "(not set)"),
+    }
+    # Test DB connection
+    try:
+        from database.db import get_connection
+        conn = get_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT 1")
+        cur.fetchone()
+        cur.close()
+        conn.close()
+        status["db"] = "✓ Connected"
+    except Exception as e:
+        status["db"] = f"✗ FAILED: {e}"
+        status["traceback"] = traceback.format_exc()
+    return jsonify(status)
+
+
 @main_bp.route("/")
 def index():
     if "user_id" in session:
