@@ -39,16 +39,20 @@ def run_migrations():
         for query in queries:
             clean_query = query.strip()
             if clean_query:
-                # Replace password placeholder with a real hashed admin password if needed,
-                # but standard execution is fine.
+                # Skip administrative database creation/selection commands on hosted platforms
+                if clean_query.upper().startswith("CREATE DATABASE") or clean_query.upper().startswith("USE "):
+                    continue
+
+                # Replace password placeholder with a real hashed admin password if needed
                 if "$2b$12$placeholder" in clean_query:
-                    # Let's replace placeholder with a real hash for admin123
                     import bcrypt
                     admin_hash = bcrypt.hashpw(b"admin123", bcrypt.gensalt()).decode()
                     clean_query = clean_query.replace("$2b$12$placeholder", admin_hash)
+                
                 try:
                     cursor.execute(clean_query)
-                except Error:
+                except Error as e:
+                    print(f"Migration Query Warning: {e} for query: {clean_query[:50]}")
                     pass
         conn.commit()
     except Error as e:
