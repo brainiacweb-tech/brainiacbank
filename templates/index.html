@@ -16,9 +16,9 @@
             <img src="{{ url_for('static', filename='images/logo.png') }}" alt="BrainiacBank Logo" style="width:28px;height:28px;object-fit:contain;margin-right:6px;">
             BrainiacBank
         </a>
-        <ul class="navbar-links">
-            <li><a href="#features">Features</a></li>
-            <li><a href="#about">About</a></li>
+        <ul class="landing-nav-links">
+            <li class="nav-item-scroll"><a href="#features">Features</a></li>
+            <li class="nav-item-scroll"><a href="#about">About</a></li>
             <li><a href="{{ url_for('auth.login') }}">Login</a></li>
             <li><a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-sm">Open Account</a></li>
         </ul>

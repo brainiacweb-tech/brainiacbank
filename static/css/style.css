@@ -1094,6 +1094,33 @@ select.form-control {
     border-bottom: 1px solid var(--gray-200);
 }
 
+.landing-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+}
+
+.landing-nav-links a {
+    color: var(--gray-600);
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius-sm);
+    transition: var(--transition);
+    font-size: 0.88rem;
+    font-weight: 600;
+}
+
+.landing-nav-links a:hover {
+    color: var(--primary);
+    background: var(--primary-50);
+}
+
+.landing-nav-links .btn {
+    padding: 0.4rem 1rem;
+    font-size: 0.82rem;
+    font-weight: 700;
+}
+
 .hero-section {
     min-height: 100vh;
     display: flex;
@@ -1706,6 +1733,21 @@ select.form-control {
     
     .landing-nav {
         padding: 0 16px;
+    }
+    
+    /* Hide informational scroll links on mobile to prevent overcrowding */
+    .landing-nav-links .nav-item-scroll {
+        display: none;
+    }
+    
+    /* Tighten links on mobile viewports */
+    .landing-nav-links {
+        gap: 0.25rem;
+    }
+    
+    .landing-nav-links a {
+        padding: 0.4rem 0.5rem;
+        font-size: 0.8rem;
     }
     
     /* Forms: full-width on mobile */
