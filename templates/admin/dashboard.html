@@ -12,28 +12,28 @@
         <div class="stat-icon blue">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
         </div>
-        <div class="stat-label">Total Core Users</div>
+        <div class="stat-label">Total Customers</div>
         <div class="stat-value" data-counter="{{ total_users }}" data-prefix="" data-decimals="0">0</div>
     </div>
     <div class="stat-card success">
         <div class="stat-icon green">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
         </div>
-        <div class="stat-label">Active Portfolios</div>
+        <div class="stat-label">Active Accounts</div>
         <div class="stat-value" data-counter="{{ active_count }}" data-prefix="" data-decimals="0">0</div>
     </div>
     <div class="stat-card info">
         <div class="stat-icon teal">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
         </div>
-        <div class="stat-label">Simulated Bank Revenue</div>
+        <div class="stat-label">Total Service Revenue</div>
         <div class="stat-value" data-counter="{{ total_revenue }}" data-prefix="GH₵" data-decimals="2">GH₵0.00</div>
     </div>
     <div class="stat-card info" style="border-color:var(--primary-dark);">
         <div class="stat-icon blue" style="background:var(--primary-light);color:var(--primary-dark);">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2" ry="2"/><rect x="5" y="5" width="14" height="14" rx="1" ry="1"/><line x1="12" y1="5" x2="12" y2="19"/></svg>
         </div>
-        <div class="stat-label">Total Vaulted Liquidity</div>
+        <div class="stat-label">Total Vault Balance</div>
         <div class="stat-value" data-counter="{{ total_balance }}" data-prefix="GH₵" data-decimals="2">GH₵0.00</div>
     </div>
 </div>
@@ -51,7 +51,7 @@
     <div class="content-card" style="margin-bottom:2rem;">
         <div class="card-header">
             <h2>Registered Customer Accounts</h2>
-            <span class="badge badge-primary">{{ total_users }} Portfolios</span>
+            <span class="badge badge-primary">{{ total_users }} Accounts</span>
         </div>
         <div class="table-responsive">
             <table class="data-table">
@@ -306,7 +306,7 @@
 <!-- TRANSACTION LOGS (RECENT ALL USERS) -->
 <div class="content-card">
     <div class="card-header">
-        <h2>Global Audit Transaction Logs</h2>
+        <h2>Global Transaction History</h2>
         <a href="{{ url_for('admin.all_transactions') }}" class="btn btn-sm btn-outline">View All Logs</a>
     </div>
     <div class="table-responsive">
@@ -314,10 +314,10 @@
             <thead>
                 <tr>
                     <th>Customer Account</th>
-                    <th>Audit Type</th>
-                    <th>Sum (GH₵)</th>
-                    <th>Audit Reference</th>
-                    <th>Log Date</th>
+                    <th>Transaction Type</th>
+                    <th>Amount</th>
+                    <th>Reference Number</th>
+                    <th>Date</th>
                 </tr>
             </thead>
             <tbody>
