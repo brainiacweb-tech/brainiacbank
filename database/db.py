@@ -1,44 +1,92 @@
 import os
 import mysql.connector
 from mysql.connector import pooling, Error
-from config import Config
 
 connection_pool = None
 
 
-def _log_env_diagnostics():
-    """Print all MySQL-related env vars so we can diagnose Railway config issues."""
+def _parse_mysql_url(url):
+    """Parse a mysql://user:pass@host:port/dbname URL into a dict."""
+    try:
+        from urllib.parse import urlparse
+        p = urlparse(url)
+        return {
+            "host": p.hostname,
+            "user": p.username,
+            "password": p.password or "",
+            "database": p.path.lstrip("/"),
+            "port": p.port or 3306,
+        }
+    except Exception as ex:
+        print(f"  Warning: could not parse MySQL URL: {ex}")
+        return None
+
+
+def _get_db_config():
+    """
+    Resolve database connection config with this priority:
+    1. MYSQL_PRIVATE_URL (Railway private network URL)
+    2. MYSQL_URL (Railway public URL)
+    3. DATABASE_URL (generic)
+    4. Individual MYSQLHOST / MYSQL_HOST env vars
+    5. localhost fallback (local dev only)
+    """
     keys = [
         "MYSQLHOST", "MYSQLUSER", "MYSQLPASSWORD", "MYSQLPORT", "MYSQLDATABASE",
         "MYSQL_HOST", "MYSQL_USER", "MYSQL_PASSWORD", "MYSQL_PORT", "MYSQL_DATABASE",
-        "MYSQL_PUBLIC_URL", "MYSQL_URL", "DATABASE_URL",
+        "MYSQL_PRIVATE_URL", "MYSQL_PUBLIC_URL", "MYSQL_URL", "DATABASE_URL",
         "RAILWAY_ENVIRONMENT", "RAILWAY_PROJECT_ID", "PORT", "RENDER",
     ]
     print("=== DB ENV DIAGNOSTICS ===")
     for k in keys:
         val = os.getenv(k)
         if val:
-            # Mask password
-            masked = val if "PASS" not in k and "PASSWORD" not in k else "***"
+            masked = val if "PASS" not in k else "***"
             print(f"  {k}={masked}")
         else:
             print(f"  {k}=(not set)")
-    print(f"=== RESOLVED CONFIG: host={Config.MYSQL_HOST} port={Config.MYSQL_PORT} user={Config.MYSQL_USER} db={Config.MYSQL_DATABASE} ===")
+
+    # 1. Prefer Railway private URL (no egress fees)
+    for url_key in ("MYSQL_PRIVATE_URL", "MYSQL_URL", "DATABASE_URL"):
+        raw_url = os.getenv(url_key, "")
+        if raw_url and ("mysql" in raw_url or "mariadb" in raw_url):
+            cfg = _parse_mysql_url(raw_url)
+            if cfg:
+                print(f"  [Using URL from {url_key}] host={cfg['host']} db={cfg['database']}")
+                return cfg
+
+    # 2. Individual env vars (Railway reference variables like ${{MySQL.MYSQLHOST}})
+    host = (os.getenv("MYSQLHOST") or os.getenv("MYSQL_HOST") or
+            os.getenv("DB_HOST") or "localhost")
+    user = (os.getenv("MYSQLUSER") or os.getenv("MYSQL_USER") or
+            os.getenv("DB_USER") or "root")
+    password = (os.getenv("MYSQLPASSWORD") or os.getenv("MYSQL_PASSWORD") or
+                os.getenv("DB_PASSWORD") or "")
+    database = (os.getenv("MYSQLDATABASE") or os.getenv("MYSQL_DATABASE") or
+                os.getenv("DB_NAME") or "railway")
+    port = int(os.getenv("MYSQLPORT") or os.getenv("MYSQL_PORT") or
+               os.getenv("DB_PORT") or 3306)
+
+    cfg = {"host": host, "user": user, "password": password,
+           "database": database, "port": port}
+    print(f"  [Using individual vars] host={host} port={port} user={user} db={database}")
+    return cfg
 
 
 def init_pool():
     global connection_pool
-    _log_env_diagnostics()
+    cfg = _get_db_config()
+    print(f"=== CONNECTING: host={cfg['host']} port={cfg['port']} user={cfg['user']} db={cfg['database']} ===")
     try:
         connection_pool = pooling.MySQLConnectionPool(
             pool_name="bank_pool",
-            pool_size=3,  # Optimized to prevent connection exhaustion on hosted database limits
+            pool_size=3,
             pool_reset_session=True,
-            host=Config.MYSQL_HOST,
-            user=Config.MYSQL_USER,
-            password=Config.MYSQL_PASSWORD,
-            database=Config.MYSQL_DATABASE,
-            port=Config.MYSQL_PORT,
+            host=cfg["host"],
+            user=cfg["user"],
+            password=cfg["password"],
+            database=cfg["database"],
+            port=cfg["port"],
         )
         print("✓ Database connection pool created successfully.")
         run_migrations()
