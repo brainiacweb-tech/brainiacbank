@@ -24,33 +24,27 @@ def allowed_file(filename):
 
 @main_bp.route("/health")
 def health():
-    """Health check endpoint — shows DB connection status and resolved env vars."""
+    """Health check — shows DB connection status."""
     import traceback
     status = {}
-    # Show resolved env vars (mask password)
+    url = os.getenv("DATABASE_URL", "")
     status["env"] = {
-        "MYSQLHOST": os.getenv("MYSQLHOST", "(not set)"),
-        "MYSQLUSER": os.getenv("MYSQLUSER", "(not set)"),
-        "MYSQLPORT": os.getenv("MYSQLPORT", "(not set)"),
-        "MYSQLDATABASE": os.getenv("MYSQLDATABASE", "(not set)"),
-        "MYSQL_PRIVATE_URL": "(set)" if os.getenv("MYSQL_PRIVATE_URL") else "(not set)",
-        "MYSQL_URL": "(set)" if os.getenv("MYSQL_URL") else "(not set)",
-        "DATABASE_URL": "(set)" if os.getenv("DATABASE_URL") else "(not set)",
+        "DATABASE_URL": f"postgresql://...{url[-20:]}" if url else "(not set)",
         "RAILWAY_ENVIRONMENT": os.getenv("RAILWAY_ENVIRONMENT", "(not set)"),
         "PORT": os.getenv("PORT", "(not set)"),
     }
-    # Test DB connection
     try:
-        from database.db import get_connection
+        from database.db import get_connection, release_connection
         conn = get_connection()
         cur = conn.cursor()
-        cur.execute("SELECT 1")
-        cur.fetchone()
+        cur.execute("SELECT version()")
+        version = cur.fetchone()[0]
         cur.close()
-        conn.close()
-        status["db"] = "✓ Connected"
+        release_connection(conn)
+        status["db"] = "Connected"
+        status["pg_version"] = version
     except Exception as e:
-        status["db"] = f"✗ FAILED: {e}"
+        status["db"] = f"FAILED: {e}"
         status["traceback"] = traceback.format_exc()
     return jsonify(status)
 
