@@ -45,7 +45,12 @@ class User:
 
     @staticmethod
     def verify_password(stored_hash, password):
-        return bcrypt.checkpw(password.encode(), stored_hash.encode())
+        try:
+            stored_bytes = stored_hash.encode('utf-8') if isinstance(stored_hash, str) else stored_hash
+            password_bytes = password.encode('utf-8') if isinstance(password, str) else password
+            return bcrypt.checkpw(password_bytes, stored_bytes)
+        except Exception:
+            return False
 
     @staticmethod
     def update_balance(user_id, new_balance):
