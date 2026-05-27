@@ -1,3 +1,4 @@
+import os
 import mysql.connector
 from mysql.connector import pooling, Error
 from config import Config
@@ -5,10 +6,30 @@ from config import Config
 connection_pool = None
 
 
+def _log_env_diagnostics():
+    """Print all MySQL-related env vars so we can diagnose Railway config issues."""
+    keys = [
+        "MYSQLHOST", "MYSQLUSER", "MYSQLPASSWORD", "MYSQLPORT", "MYSQLDATABASE",
+        "MYSQL_HOST", "MYSQL_USER", "MYSQL_PASSWORD", "MYSQL_PORT", "MYSQL_DATABASE",
+        "MYSQL_PUBLIC_URL", "MYSQL_URL", "DATABASE_URL",
+        "RAILWAY_ENVIRONMENT", "RAILWAY_PROJECT_ID", "PORT", "RENDER",
+    ]
+    print("=== DB ENV DIAGNOSTICS ===")
+    for k in keys:
+        val = os.getenv(k)
+        if val:
+            # Mask password
+            masked = val if "PASS" not in k and "PASSWORD" not in k else "***"
+            print(f"  {k}={masked}")
+        else:
+            print(f"  {k}=(not set)")
+    print(f"=== RESOLVED CONFIG: host={Config.MYSQL_HOST} port={Config.MYSQL_PORT} user={Config.MYSQL_USER} db={Config.MYSQL_DATABASE} ===")
+
+
 def init_pool():
     global connection_pool
+    _log_env_diagnostics()
     try:
-        print(f"Database Config: Target={Config.MYSQL_HOST}:{Config.MYSQL_PORT} | User={Config.MYSQL_USER} | DB={Config.MYSQL_DATABASE}")
         connection_pool = pooling.MySQLConnectionPool(
             pool_name="bank_pool",
             pool_size=3,  # Optimized to prevent connection exhaustion on hosted database limits
@@ -19,9 +40,10 @@ def init_pool():
             database=Config.MYSQL_DATABASE,
             port=Config.MYSQL_PORT,
         )
+        print("✓ Database connection pool created successfully.")
         run_migrations()
     except Error as e:
-        print(f"Error creating connection pool: {e}")
+        print(f"✗ Error creating connection pool: {e}")
         import traceback
         traceback.print_exc()
         raise
