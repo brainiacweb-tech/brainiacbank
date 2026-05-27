@@ -1724,7 +1724,26 @@ select.form-control {
     }
     
     .hero-visual {
-        display: none;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        max-width: 100%;
+        margin-top: 2.5rem;
+        margin-bottom: 3rem;
+        position: relative;
+    }
+    
+    .hero-card-main {
+        transform: scale(0.85);
+        transform-origin: center center;
+        margin: 0 auto;
+    }
+    
+    @media (max-width: 380px) {
+        .hero-card-main {
+            transform: scale(0.72);
+        }
     }
     
     .navbar-links {
