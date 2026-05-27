@@ -8,6 +8,7 @@ connection_pool = None
 def init_pool():
     global connection_pool
     try:
+        print(f"Database Config: Target={Config.MYSQL_HOST}:{Config.MYSQL_PORT} | User={Config.MYSQL_USER} | DB={Config.MYSQL_DATABASE}")
         connection_pool = pooling.MySQLConnectionPool(
             pool_name="bank_pool",
             pool_size=10,
