@@ -1724,10 +1724,26 @@ select.form-control {
         transform-origin: center center;
         margin: 0 auto;
     }
+    .hero-card-float-1 {
+        top: -35px !important;
+        right: 10px !important;
+    }
+    .hero-card-float-2 {
+        bottom: -45px !important;
+        left: 10px !important;
+    }
     
     @media (max-width: 380px) {
         .hero-card-main {
             transform: scale(0.72);
+        }
+        .hero-card-float-1 {
+            top: -25px !important;
+            right: 0px !important;
+        }
+        .hero-card-float-2 {
+            bottom: -35px !important;
+            left: 0px !important;
         }
     }
     
