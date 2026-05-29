@@ -106,15 +106,37 @@ function formatCurrency(amount) {
 function initSidebar() {
     const toggle = document.querySelector('.mobile-toggle');
     const sidebar = document.querySelector('.sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
     if (!toggle || !sidebar) return;
 
-    toggle.addEventListener('click', () => {
+    function toggleMenu() {
         sidebar.classList.toggle('open');
+        toggle.classList.toggle('active');
+        if (overlay) {
+            overlay.classList.toggle('active');
+        }
+    }
+
+    function closeMenu() {
+        sidebar.classList.remove('open');
+        toggle.classList.remove('active');
+        if (overlay) {
+            overlay.classList.remove('active');
+        }
+    }
+
+    toggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleMenu();
     });
+
+    if (overlay) {
+        overlay.addEventListener('click', closeMenu);
+    }
 
     document.addEventListener('click', (e) => {
         if (window.innerWidth <= 1024 && !sidebar.contains(e.target) && !toggle.contains(e.target)) {
-            sidebar.classList.remove('open');
+            closeMenu();
         }
     });
 }
