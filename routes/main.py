@@ -267,7 +267,7 @@ def download_transactions_excel():
   .logo {{
     font-size: 18pt;
     font-weight: bold;
-    color: #9CF027;
+    color: #FFB81C;
     font-family: 'Montserrat', sans-serif;
   }}
   .brand-sub {{
@@ -293,7 +293,7 @@ def download_transactions_excel():
   }}
   .statement-table th {{
     background-color: #0b0f19;
-    color: #9CF027;
+    color: #FFB81C;
     font-weight: bold;
     border: 1.5px solid #1f2937;
     padding: 10px 12px;
@@ -351,7 +351,7 @@ def download_transactions_excel():
     </tr>
     <tr>
       <td class="info-label">Current Balance:</td>
-      <td class="info-value" style="font-weight:bold; color:#9CF027; mso-number-format:'GH₵\\ \\#\\,\\#\\#0\\.00';">{user['balance']}</td>
+      <td class="info-value" style="font-weight:bold; color:#FFB81C; mso-number-format:'GH₵\\ \\#\\,\\#\\#0\\.00';">{user['balance']}</td>
       <td class="info-label">Export Date:</td>
       <td class="info-value">{datetime.now().strftime('%Y-%m-%d')}</td>
     </tr>
