@@ -88,7 +88,18 @@ def activate_account(user_id):
 @admin_bp.route("/loans/<int:loan_id>/approve", methods=["POST"])
 @admin_required
 def approve_loan(loan_id):
+    # Fetch details first for notification
+    loan = execute_query("SELECT user_id, amount FROM loans WHERE id = %s", (loan_id,), fetch_one=True)
     if Loan.approve(loan_id):
+        if loan:
+            from models.notification import Notification
+            Notification.notify_transaction(
+                loan["user_id"], 
+                "deposit", 
+                loan["amount"], 
+                f"LN{loan_id}DISB", 
+                f"Your loan request #{loan_id} has been APPROVED. Funds disbursed successfully."
+            )
         flash("Loan approved and funds disbursed successfully!", "success")
     else:
         flash("Could not approve loan request.", "danger")
@@ -98,7 +109,14 @@ def approve_loan(loan_id):
 @admin_bp.route("/loans/<int:loan_id>/reject", methods=["POST"])
 @admin_required
 def reject_loan(loan_id):
+    loan = execute_query("SELECT user_id, amount FROM loans WHERE id = %s", (loan_id,), fetch_one=True)
     Loan.reject(loan_id)
+    if loan:
+        from models.notification import Notification
+        Notification.notify_alert(
+            loan["user_id"], 
+            f"Your loan request #{loan_id} for GH₵ {loan['amount']:,.2f} has been REJECTED. Please contact support."
+        )
     flash("Loan request rejected.", "warning")
     return redirect(url_for("admin.dashboard"))
 
