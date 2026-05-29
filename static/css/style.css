@@ -123,6 +123,15 @@ body.dark-theme .flash-message {
     box-shadow: 0 10px 15px rgba(0,0,0,0.3);
 }
 
+/* Force Solid Card look in Dark Theme for the modal */
+body.dark-theme .modal-content-solid {
+    background-color: #1e293b !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+}
+
 /* Dark Mode High-Contrast and Visibility Fixes */
 body.dark-theme h1, 
 body.dark-theme h2, 
