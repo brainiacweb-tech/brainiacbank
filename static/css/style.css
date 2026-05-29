@@ -1,14 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800;900&family=Montserrat:wght@400;500;600;700;800;900&family=Rubik:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary: #9CF027; /* Lime Green Accent */
-    --primary-dark: #82d31c;
-    --primary-darker: #6ba716;
-    --primary-light: rgba(156, 240, 39, 0.1);
-    --primary-50: rgba(156, 240, 39, 0.05);
-    --dark: #1E293B; /* Text Dark */
-    --dark-2: #0f172a;
-    --dark-3: #1e293b;
+    --primary: #FFB81C; /* GCB Amber Gold Accent */
+    --primary-dark: #E09E0D;
+    --primary-darker: #BF8400;
+    --primary-light: rgba(255, 184, 28, 0.1);
+    --primary-50: rgba(255, 184, 28, 0.05);
+    --dark: #002C6C; /* GCB Royal Blue Accent */
+    --dark-2: #051636;
+    --dark-3: #0a2240;
     --white: #ffffff;
     --gray-50: #f8fafc;
     --gray-100: #f1f5f9;
@@ -40,24 +40,24 @@
 
 /* Dark Theme Variables & Styling Overrides */
 body.dark-theme {
-    background-color: #0b0f19;
+    background-color: #030C1C;
     background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
     background-size: 24px 24px;
     color: #f8fafc;
 }
 body.dark-theme .navbar {
-    background-color: #0f172a;
+    background-color: #061226;
     border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 body.dark-theme .sidebar {
-    background-color: #0f172a;
+    background-color: #061226;
     border-right-color: rgba(255, 255, 255, 0.08);
 }
 body.dark-theme .content-card, 
 body.dark-theme .stat-card, 
 body.dark-theme .quick-action-btn,
 body.dark-theme .account-info-card {
-    background-color: #1e293b !important;
+    background-color: #0A1C38 !important;
     border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
     color: #f8fafc;
 }
@@ -65,7 +65,7 @@ body.dark-theme .account-info-card {
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 body.dark-theme .form-control {
-    background-color: rgba(15, 23, 42, 0.5) !important;
+    background-color: rgba(6, 18, 38, 0.5) !important;
     border: 1.5px solid rgba(255, 255, 255, 0.2) !important;
     color: #f8fafc;
 }
@@ -73,12 +73,12 @@ body.dark-theme .sidebar-nav li a {
     color: #94a3b8;
 }
 body.dark-theme .sidebar-nav li a:hover {
-    background-color: rgba(156, 240, 39, 0.04) !important;
-    color: #9cf027;
+    background-color: rgba(255, 184, 28, 0.04) !important;
+    color: #FFB81C;
 }
 body.dark-theme .sidebar-nav li a.active {
-    background-color: rgba(156, 240, 39, 0.08) !important;
-    color: #9cf027 !important;
+    background-color: rgba(255, 184, 28, 0.08) !important;
+    color: #FFB81C !important;
 }
 body.dark-theme .data-table th {
     background-color: rgba(30, 41, 59, 0.6);
@@ -111,7 +111,7 @@ body.dark-theme .form-group label {
     color: #cbd5e1;
 }
 body.dark-theme .flash-message {
-    background-color: #1e293b;
+    background-color: #0A1C38;
     color: #f8fafc;
     box-shadow: 0 10px 15px rgba(0,0,0,0.3);
 }
@@ -127,7 +127,7 @@ body.dark-theme .flash-message {
 
 /* Force Solid Card look in Dark Theme for the modal */
 body.dark-theme .modal-content-solid {
-    background-color: #1e293b !important;
+    background-color: #0A1C38 !important;
     backdrop-filter: none !important;
     -webkit-backdrop-filter: none !important;
     border: 1.5px solid rgba(255, 255, 255, 0.08) !important;
