@@ -1,16 +1,7 @@
--- Drops all tables to reset the database completely
-DROP TABLE IF EXISTS kyc_documents CASCADE;
-DROP TABLE IF EXISTS beneficiaries CASCADE;
-DROP TABLE IF EXISTS savings_goals CASCADE;
-DROP TABLE IF EXISTS atm_requests CASCADE;
-DROP TABLE IF EXISTS fixed_deposits CASCADE;
-DROP TABLE IF EXISTS loans CASCADE;
-DROP TABLE IF EXISTS notifications CASCADE;
-DROP TABLE IF EXISTS virtual_cards CASCADE;
-DROP TABLE IF EXISTS login_logs CASCADE;
-DROP TABLE IF EXISTS transfers CASCADE;
-DROP TABLE IF EXISTS transactions CASCADE;
-DROP TABLE IF EXISTS users CASCADE;
+-- BrainiacBank PostgreSQL Schema (Supabase/Render)
+-- Safe schema design: Tables are created IF NOT EXISTS, preserving user data permanently between redeploys.
+
+
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
