@@ -59,3 +59,11 @@ class Notification:
     @staticmethod
     def notify_card(user_id, message):
         Notification.create(user_id, "Virtual Card", message, "info")
+
+    @staticmethod
+    def notify_info(user_id, message):
+        Notification.create(user_id, "Account Update", message, "info")
+
+    @staticmethod
+    def notify_alert(user_id, message):
+        Notification.create(user_id, "Credit Update", message, "alert")

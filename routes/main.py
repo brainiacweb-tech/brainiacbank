@@ -10,6 +10,7 @@ from models.loan import Loan
 from models.deposit_mgmt import FixedDeposit
 from models.atm import AtmRequest
 from models.extra import Beneficiary, SavingsGoal
+from database.db import execute_query, execute_transaction
 from utils.helpers import login_required, format_currency, client_required
 from werkzeug.utils import secure_filename
 
@@ -728,7 +729,7 @@ def payments():
                  (user["id"], amount, user["id"], desc, ref))
             ]
             execute_transaction(queries)
-            Notification.notify_transaction(user["id"], f"Payment of GH₵ {amount:,.2f} for {desc}.")
+            Notification.notify_transaction(user["id"], "withdrawal", amount, ref)
             flash(f"Payment of GH₵ {amount:,.2f} completed successfully!", "success")
             return redirect(url_for("main.dashboard"))
         except Exception as e:
