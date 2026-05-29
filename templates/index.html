@@ -8,6 +8,20 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=1.4">
+    
+    <!-- Open Graph / Facebook / LinkedIn sharing previews -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.url }}">
+    <meta property="og:title" content="BrainiacBank — Modern Digital Banking">
+    <meta property="og:description" content="Educational simulated digital banking platform built by Francis Kusi demonstrating robust full-stack software development, audit logs, and modern UX design.">
+    <meta property="og:image" content="{{ request.url_root | trim }}static/images/logo.png">
+
+    <!-- Twitter card sharing previews -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ request.url }}">
+    <meta name="twitter:title" content="BrainiacBank — Modern Digital Banking">
+    <meta name="twitter:description" content="Educational simulated digital banking platform built by Francis Kusi demonstrating robust full-stack software development, audit logs, and modern UX design.">
+    <meta name="twitter:image" content="{{ request.url_root | trim }}static/images/logo.png">
 </head>
 <body>
     <!-- NAV -->
