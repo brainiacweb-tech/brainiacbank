@@ -1793,6 +1793,18 @@ select.form-control {
         gap: 0.5rem !important;
     }
     
+    /* Transaction export buttons adjustments for mobile */
+    .transaction-actions {
+        width: 100% !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.5rem !important;
+    }
+    .transaction-actions .btn {
+        width: 100% !important;
+        justify-content: center !important;
+    }
+    
     /* Footer adjustments for mobile */
     .dashboard-footer {
         flex-direction: column !important;
