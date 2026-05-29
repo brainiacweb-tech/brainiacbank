@@ -1775,6 +1775,35 @@ select.form-control {
         width: 100%;
         max-width: 100%;
     }
+    
+    /* Dashboard navbar adjustments for mobile */
+    .navbar {
+        padding: 0 0.75rem !important;
+    }
+    .navbar-username-text {
+        display: none !important;
+    }
+    .navbar-logout-text {
+        display: none !important;
+    }
+    .navbar-user {
+        gap: 0.5rem !important;
+    }
+    
+    /* Footer adjustments for mobile */
+    .dashboard-footer {
+        flex-direction: column !important;
+        text-align: center !important;
+        align-items: center !important;
+        gap: 1.25rem !important;
+        padding: 1.5rem 1rem !important;
+        margin-top: 2rem !important;
+    }
+    .dashboard-footer div {
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+    }
 }
 
 /* Logged-in Dashboard Footer Styling */
